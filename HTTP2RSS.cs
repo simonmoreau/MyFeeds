@@ -118,10 +118,19 @@ namespace HTTP2RSS
                             writer.WriteEndElement();
                         }
 
+                        if (article.Author != "")
+                        {
+                            writer.WriteStartElement("author");
+                            writer.WriteElementString("name", article.Author);
+                            writer.WriteEndElement();
 
-                        writer.WriteStartElement("author");
-                        writer.WriteElementString("name", "Simon Moreau");
-                        writer.WriteEndElement();
+                        }
+                        else
+                        {
+                            writer.WriteStartElement("author");
+                            writer.WriteElementString("name", "Simon Moreau");
+                            writer.WriteEndElement();
+                        }
 
                         writer.WriteElementString("id", article.Id);
 

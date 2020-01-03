@@ -15,6 +15,7 @@ namespace HTTP2RSS
         public string MediaLink { get; set; }
         public string Link {get;set;}
         public DateTime Updated {get;set;}
+        public string Author {get;set;}
     }
 
     public class WebsiteFeed

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.ServiceModel.Syndication;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 using HtmlAgilityPack;
 
@@ -27,48 +29,35 @@ namespace HTTP2RSS
 
             string feedUrl = "https://www.permanentstyle.com/feed";
 
-            XmlSerializer serializer = new XmlSerializer(typeof(Channel));
+            XmlReader reader = XmlReader.Create(feedUrl);
+            SyndicationFeed feed = SyndicationFeed.Load(reader);
+            reader.Close();
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(feedUrl);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            foreach (SyndicationItem item in feed.Items)
             {
-                Stream receiveStream = response.GetResponseStream();
-                StreamReader readStream = null;
-
-                if (String.IsNullOrWhiteSpace(response.CharacterSet))
-                    readStream = new StreamReader(receiveStream);
-                else
-                    readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
-
-                Channel channel = (Channel)serializer.Deserialize(readStream);
-                readStream.Close();
-
-                foreach (Item item in channel.Item)
-                {
-                    // Get the content of the article
+                                    // Get the content of the article
                     var web = new HtmlWeb();
-                    var doc = web.Load(item.Link2);
+                    var doc = web.Load(item.Links.FirstOrDefault().Uri.ToString());
 
-                                string xPath = @"//div[1]/div[1]/div/div/[contains(@class, 'siteorigin-widget-tinymce')]";
-            HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
-
+                    string ClassToGet = "siteorigin-widget-tinymce textwidget";
+                    string xPath = @"//div[@class='" + ClassToGet + "']";
+                    HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
+                    string content = htmlNodes.FirstOrDefault().InnerHtml;
 
                     articles.Add(new Article
                     {
-                        Id = item.Guid,
-                        HTMLTitle = item.Title,
-                        Title = item.Title,
-                        WebsiteUrl = item.Link2,
-                        Link = item.CommentRss,
-                        Summary = item.Description,
-                        Content = "item.Link2",
-                        MediaLink = item.CommentRss,
-                        Updated = DateTime.Parse(item.PubDate),
-                        Category = item.Category[0]
+                        Id = item.Id,
+                        HTMLTitle = item.Title.Text,
+                        Title = item.Title.Text,
+                        WebsiteUrl = item.Links.FirstOrDefault().Uri.ToString(),
+                        Link = item.Links.FirstOrDefault().Uri.ToString(),
+                        Summary = item.Summary.Text,
+                        Content = content,
+                        MediaLink = "",
+                        Updated = item.PublishDate.UtcDateTime,
+                        Category = item.Categories.FirstOrDefault().ToString(),
+                        Author = "Simon Crompton"
                     });
-                }
             }
 
             return articles;

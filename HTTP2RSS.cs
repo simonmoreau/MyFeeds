@@ -30,6 +30,12 @@ namespace HTTP2RSS
 
             string blobUIR = UploadXmlFeedFile(textFeed, feed.FeedId, configRoot).Result;
 
+            WebsiteFeed feed2 = new PermanentStyle();
+
+            string textFeed2 = BuildXmlFeed(feed2);
+
+            string blobUIR2 = UploadXmlFeedFile(textFeed2, feed2.FeedId, configRoot).Result;
+
             log.LogInformation($"RSSFeed function executed at: {DateTime.Now}");
         }
 

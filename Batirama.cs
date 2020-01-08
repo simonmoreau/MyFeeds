@@ -55,7 +55,7 @@ namespace HTTP2RSS
                         Content = content,
                         MediaLink = "",
                         Updated = item.PublishDate.UtcDateTime,
-                        Category = item.Categories.FirstOrDefault().ToString(),
+                        Category = item.Categories.FirstOrDefault()?.ToString(),
                         Author = "Simon Crompton"
                     });
             }

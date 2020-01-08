@@ -24,17 +24,17 @@ namespace HTTP2RSS
             .AddEnvironmentVariables()
             .Build();
 
-            WebsiteFeed feed = new LeVestiaireDuRenard();
+            List<WebsiteFeed> feeds = new List<WebsiteFeed>();
+            feeds.Add(new LeVestiaireDuRenard());
+            feeds.Add(new PermanentStyle());
+            feeds.Add(new Batirama());
 
-            string textFeed = BuildXmlFeed(feed);
+            foreach (WebsiteFeed feed in feeds)
+            {
+                            string textFeed = BuildXmlFeed(feed);
 
             string blobUIR = UploadXmlFeedFile(textFeed, feed.FeedId, configRoot).Result;
-
-            WebsiteFeed feed2 = new PermanentStyle();
-
-            string textFeed2 = BuildXmlFeed(feed2);
-
-            string blobUIR2 = UploadXmlFeedFile(textFeed2, feed2.FeedId, configRoot).Result;
+            }
 
             log.LogInformation($"RSSFeed function executed at: {DateTime.Now}");
         }

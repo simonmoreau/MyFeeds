@@ -28,12 +28,13 @@ namespace HTTP2RSS
             feeds.Add(new LeVestiaireDuRenard());
             feeds.Add(new PermanentStyle());
             feeds.Add(new Batirama());
+            feeds.Add(new BonneGueule());
 
             foreach (WebsiteFeed feed in feeds)
             {
-                            string textFeed = BuildXmlFeed(feed);
+                string textFeed = BuildXmlFeed(feed);
 
-            string blobUIR = UploadXmlFeedFile(textFeed, feed.FeedId, configRoot).Result;
+                string blobUIR = UploadXmlFeedFile(textFeed, feed.FeedId, configRoot).Result;
             }
 
             log.LogInformation($"RSSFeed function executed at: {DateTime.Now}");
@@ -123,7 +124,6 @@ namespace HTTP2RSS
                             writer.WriteStartElement("author");
                             writer.WriteElementString("name", article.Author);
                             writer.WriteEndElement();
-
                         }
                         else
                         {

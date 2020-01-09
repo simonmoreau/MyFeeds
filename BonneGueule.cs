@@ -11,14 +11,14 @@ using HtmlAgilityPack;
 
 namespace HTTP2RSS
 {
-    public class Batirama : WebsiteFeed
+    public class BonneGueule : WebsiteFeed
     {
-        public Batirama()
+        public BonneGueule()
         {
-            this.Title = "Batirama";
-            this.Subtitle = "Retrouvez l'intégralité de l'actualité de Batirama en temps réel";
-            this.WebLink = "https://www.batirama.com/";
-            this.FeedId = "BatiramaRSS";
+            this.Title = "Bonne Gueule";
+            this.Subtitle = "Des vêtements et des Hommes";
+            this.WebLink = "https://www.bonnegueule.fr/";
+            this.FeedId = "BonneGueuleFeed";
             this.FeedLink = HTTP2RSS.BlobBaseUrl + this.FeedId + ".xml";
             this.Articles = RebuildFeed();
         }
@@ -27,7 +27,7 @@ namespace HTTP2RSS
         {
             List<Article> articles = new List<Article>();
 
-            string feedUrl = "https://www.batirama.com/rss/2-l-info-actualites.html";
+            string feedUrl = "https://www.bonnegueule.fr/feed/";
 
             XmlReader reader = XmlReader.Create(feedUrl);
             SyndicationFeed feed = SyndicationFeed.Load(reader);
@@ -39,7 +39,7 @@ namespace HTTP2RSS
                     var web = new HtmlWeb();
                     var doc = web.Load(item.Links.FirstOrDefault().Uri.ToString());
 
-                    string ClassToGet = "post post-default post-variant-3";
+                    string ClassToGet = "entry-content clearfix e-content";
                     string xPath = @"//div[@class='" + ClassToGet + "']";
                     HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
                     string content = htmlNodes.FirstOrDefault().InnerHtml;
@@ -52,7 +52,7 @@ namespace HTTP2RSS
                         WebsiteUrl = item.Links.FirstOrDefault().Uri.ToString(),
                         Link = item.Links.FirstOrDefault().Uri.ToString(),
                         Summary = item.Summary.Text,
-                        Content = content,
+                        Content = content.Replace("\b",""),
                         MediaLink = "",
                         Updated = item.PublishDate.UtcDateTime,
                         Category = item.Categories.FirstOrDefault()?.ToString(),

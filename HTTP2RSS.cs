@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 
 namespace HTTP2RSS
 {
@@ -29,6 +30,8 @@ namespace HTTP2RSS
             feeds.Add(new PermanentStyle());
             feeds.Add(new Batirama());
             feeds.Add(new BonneGueule());
+            // feeds.Add(new PhilippeSilberzahn());
+            feeds.Add(new TheSocialiteFamily());
 
             foreach (WebsiteFeed feed in feeds)
             {

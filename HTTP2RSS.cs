@@ -9,6 +9,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Configuration;
 using System.Net;
+using System.Net.Http;
 
 namespace HTTP2RSS
 {
@@ -17,33 +18,41 @@ namespace HTTP2RSS
         public static string BlobBaseUrl = "https://helloworldfromb809c.blob.core.windows.net/rssfeeds/";
 
         [FunctionName("HTTP2RSS")]
-        public static void Run([TimerTrigger("0 0 */6 * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public static void Run([TimerTrigger("0 0 */6 * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
-            IConfigurationRoot configRoot = new ConfigurationBuilder()
-            .SetBasePath(context.FunctionAppDirectory)
-            .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables()
-            .Build();
-
-            List<WebsiteFeed> feeds = new List<WebsiteFeed>();
-            feeds.Add(new LeVestiaireDuRenard());
-            feeds.Add(new PermanentStyle());
-            feeds.Add(new Batirama());
-            feeds.Add(new BonneGueule());
-            // feeds.Add(new PhilippeSilberzahn());
-            feeds.Add(new TheSocialiteFamily());
-
-            foreach (WebsiteFeed feed in feeds)
+            try
             {
-                string textFeed = BuildXmlFeed(feed);
+                IConfigurationRoot configRoot = new ConfigurationBuilder()
+.SetBasePath(context.FunctionAppDirectory)
+.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+.AddEnvironmentVariables()
+.Build();
 
-                string blobUIR = UploadXmlFeedFile(textFeed, feed.FeedId, configRoot).Result;
+                List<WebsiteFeed> feeds = new List<WebsiteFeed>();
+                // feeds.Add(new LeVestiaireDuRenard());
+                feeds.Add(new PermanentStyle());
+                feeds.Add(new Batirama());
+                feeds.Add(new BonneGueule());
+                // feeds.Add(new PhilippeSilberzahn());
+                feeds.Add(new TheSocialiteFamily());
+
+                foreach (WebsiteFeed feed in feeds)
+                {
+                    string textFeed = BuildXmlFeed(feed);
+
+                    string blobUIR = UploadXmlFeedFile(textFeed, feed.FeedId, configRoot).Result;
+                }
+
+                log.LogInformation($"RSSFeed function executed at: {DateTime.Now}");
             }
-
-            log.LogInformation($"RSSFeed function executed at: {DateTime.Now}");
+            catch (Exception ex)
+            {
+                log.LogInformation($"{DateTime.Now} : Error : {ex.ToString()}");
+                throw ex;
+            }
         }
 
-        public static string BuildXmlFeed(WebsiteFeed feed)
+        private static string BuildXmlFeed(WebsiteFeed feed)
         {
             List<Article> articles = feed.Articles;
 

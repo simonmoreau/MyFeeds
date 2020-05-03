@@ -35,29 +35,37 @@ namespace HTTP2RSS
 
             foreach (SyndicationItem item in feed.Items)
             {
-                                    // Get the content of the article
-                    var web = new HtmlWeb();
-                    var doc = web.Load(item.Links.FirstOrDefault().Uri.ToString());
+                // Get the content of the article
+                var web = new HtmlWeb();
+                var doc = web.Load(item.Links.FirstOrDefault().Uri.ToString());
 
-                    string ClassToGet = "entry-content clearfix e-content";
-                    string xPath = @"//div[@class='" + ClassToGet + "']";
-                    HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
-                    string content = htmlNodes.FirstOrDefault().InnerHtml;
+                string ClassToGet = "entry-content clearfix e-content";
+                string xPath = @"//div[@class='" + ClassToGet + "']";
+                HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
 
-                    articles.Add(new Article
+                if (htmlNodes != null)
+                {
+                    string content = htmlNodes.FirstOrDefault()?.InnerHtml;
+
+                    if (content != null)
                     {
-                        Id = item.Id,
-                        HTMLTitle = item.Title.Text,
-                        Title = item.Title.Text,
-                        WebsiteUrl = item.Links.FirstOrDefault().Uri.ToString(),
-                        Link = item.Links.FirstOrDefault().Uri.ToString(),
-                        Summary = item.Summary.Text,
-                        Content = content.Replace("\b",""),
-                        MediaLink = "",
-                        Updated = item.PublishDate.UtcDateTime,
-                        Category = item.Categories.FirstOrDefault()?.ToString(),
-                        Author = item.Authors.FirstOrDefault()?.Name
-                    });
+                        articles.Add(new Article
+                        {
+                            Id = item.Id,
+                            HTMLTitle = item.Title.Text,
+                            Title = item.Title.Text,
+                            WebsiteUrl = item.Links.FirstOrDefault().Uri.ToString(),
+                            Link = item.Links.FirstOrDefault().Uri.ToString(),
+                            Summary = item.Summary.Text,
+                            Content = content.Replace("\b", ""),
+                            MediaLink = "",
+                            Updated = item.PublishDate.UtcDateTime,
+                            Category = item.Categories.FirstOrDefault()?.ToString(),
+                            Author = item.Authors.FirstOrDefault()?.Name
+                        });
+                    }
+                }
+
             }
 
             return articles;

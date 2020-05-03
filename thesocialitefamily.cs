@@ -43,11 +43,33 @@ namespace HTTP2RSS
 
                 string ClassToGet = "content-strate";
                 string xPath = @"//div[@class='" + ClassToGet + "']";
-                HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
+                HtmlNodeCollection contentNodes = doc.DocumentNode.SelectNodes(xPath);
 
-                if (htmlNodes != null)
+                if (contentNodes != null)
                 {
-                    string content = htmlNodes.FirstOrDefault().InnerHtml;
+                    HtmlNode contentNode = contentNodes.FirstOrDefault();
+                    // Find image nodes
+                    string imageClassInContent = "block-strate imgvideo-container";
+                    string xPathImageClass = @"//div[@class='" + imageClassInContent + "']";
+                    HtmlNodeCollection imageNodes = contentNode.SelectNodes(xPathImageClass);
+
+                    if (imageNodes != null)
+                    {
+                        // Replace them
+                        foreach (HtmlNode imageNode in imageNodes.ToList())
+                        {
+                            // Find the image link
+                            HtmlNode imageSourceNode = imageNode.SelectNodes(@".//img")?.FirstOrDefault();
+                            if (imageSourceNode != null)
+                            {
+                                imageNode.ParentNode.ReplaceChild(imageSourceNode, imageNode);
+                            }
+                        }
+                    }
+
+
+                    string content = contentNode.InnerHtml;
+
 
                     articles.Add(new Article
                     {

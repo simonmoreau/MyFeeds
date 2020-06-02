@@ -29,12 +29,13 @@ namespace HTTP2RSS
 .Build();
 
                 List<WebsiteFeed> feeds = new List<WebsiteFeed>();
+                feeds.Add(new DroitUrbanismeAmenagement());
                 // feeds.Add(new LeVestiaireDuRenard());
                 feeds.Add(new PermanentStyle());
                 feeds.Add(new Batirama());
                 feeds.Add(new BonneGueule());
                 // feeds.Add(new PhilippeSilberzahn());
-                feeds.Add(new TheSocialiteFamily());
+                // feeds.Add(new TheSocialiteFamily());
 
                 foreach (WebsiteFeed feed in feeds)
                 {

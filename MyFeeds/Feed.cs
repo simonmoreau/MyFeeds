@@ -10,37 +10,63 @@ namespace MyFeeds
 {
     internal class Feed
     {
+        internal readonly List<Article> Articles = new List<Article>();
+        
+        public string WebLink { get; set; }
+        public string Title { get; set; }
+        public string Subtitle { get; set; }
 
-        private void WriteFeed()
+
+        public readonly string FeedId;
+        public readonly string FeedLink;
+        internal Feed()
         {
-            SyndicationFeed feed = new SyndicationFeed("Feed Title", "Feed Description", new Uri("http://Feed/Alternate/Link"), "FeedID", DateTime.Now);
+            FeedId = GetType().Name;
+            FeedLink = "https://rnbsshrb6gtyyazfunctions.blob.core.windows.net/licences/" + this.FeedId + ".xml";
+        }
 
-            SyndicationPerson sp = new SyndicationPerson("jesper@contoso.com", "Jesper Aaberg", "http://Jesper/Aaberg");
+        public string WriteFeed()
+        {
+            string feedLink = null;
+
+            SyndicationFeed feed = new SyndicationFeed(Title, Subtitle, new Uri(FeedLink), FeedId, DateTime.Now);
+
+            SyndicationPerson sp = new SyndicationPerson("simon@bim42.com", "Simon Moreau","");
             feed.Authors.Add(sp);
 
-            feed.Description = new TextSyndicationContent("This is a sample feed");
+            feed.Description = new TextSyndicationContent(Subtitle);
 
             feed.Generator = "MyFeeds";
-            feed.Id = "FeedID";
+            feed.Id = FeedId;
             feed.ImageUrl = new Uri("http://server/image.jpg");
             feed.Language = "en-us";
             feed.LastUpdatedTime = DateTime.Now;
 
-            SyndicationLink link = new SyndicationLink(new Uri("http://server/link"), "alternate", "Link Title", "text/html", 1000);
+            SyndicationLink link = new SyndicationLink(new Uri(FeedLink), "alternate", "Link Title", "text/html", 1000);
             feed.Links.Add(link);
 
-            TextSyndicationContent textContent = new TextSyndicationContent("Some text content");
-            SyndicationItem item = new SyndicationItem("Item Title", textContent, new Uri("http://server/items"), "ItemID", DateTime.Now);
-
             List<SyndicationItem> items = new List<SyndicationItem>();
-            items.Add(item);
+
+            foreach (Article article in Articles)
+            {
+                TextSyndicationContent textContent = new TextSyndicationContent(article.Content);
+                SyndicationItem item = new SyndicationItem(article.Title, textContent, new Uri(article.Link), article.Id, article.Updated);
+                
+                
+                items.Add(item);
+            }
+
             feed.Items = items;
 
+            Rss20FeedFormatter rssFormatter = new Rss20FeedFormatter(feed, false);
+            StringBuilder output = new StringBuilder();
+            using (XmlWriter writer = XmlWriter.Create(output, new XmlWriterSettings { Indent = true }))
+            {
+                rssFormatter.WriteTo(writer);
+                writer.Flush();
+                return output.ToString();
+            }
 
-            XmlWriter rssWriter = XmlWriter.Create("rss.xml");
-            Rss20FeedFormatter rssFormatter = new Rss20FeedFormatter(feed);
-            rssFormatter.WriteTo(rssWriter);
-            rssWriter.Close();
         }
     }
 }

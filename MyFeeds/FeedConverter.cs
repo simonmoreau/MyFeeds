@@ -25,7 +25,7 @@ namespace MyFeeds
             , RunOnStartup=true
 #endif
             )] TimerInfo myTimer,
-            [BlobInput("test-samples-output")] BlobContainerClient blobContainerClient)
+            [BlobInput("feeds")] BlobContainerClient blobContainerClient)
         {
             try
             {

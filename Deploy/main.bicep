@@ -21,7 +21,7 @@ param appInsightsLocation string
   'dotnet'
   'java'
 ])
-param runtime string = 'node'
+param runtime string = 'dotnet'
 
 var functionAppName = appName
 var hostingPlanName = appName
@@ -41,6 +41,18 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     defaultToOAuthAuthentication: true
   }
 }
+
+// Create blob service
+resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2021-09-01' = {
+  name: 'default'
+  parent: storageAccount
+}
+
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-02-01' = {
+  name: 'feeds'
+  parent: blobService
+}
+
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: hostingPlanName
@@ -89,9 +101,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: functionWorkerRuntime
+          value: 'dotnet-isolated'
         }
       ]
+      netFrameworkVersion:'8.0'
       ftpsState: 'FtpsOnly'
       minTlsVersion: '1.2'
     }
@@ -108,3 +121,4 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
     Request_Source: 'rest'
   }
 }
+

@@ -8,9 +8,9 @@ using System.Xml;
 
 namespace MyFeeds
 {
-    internal abstract class Feed
+    public abstract class Feed
     {
-        internal readonly List<Article> Articles = new List<Article>();
+        public readonly List<Article> Articles = new List<Article>();
         
         public string WebLink { get; set; }
         public string Title { get; set; }

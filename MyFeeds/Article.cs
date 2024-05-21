@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyFeeds
 {
-    internal class Article
+    public class Article
     {
         public string Id { get; set; }
         public string HTMLTitle { get; set; }

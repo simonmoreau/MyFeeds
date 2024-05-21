@@ -20,7 +20,7 @@ namespace MyFeeds
 
         [Function(nameof(FeedConverter))]
         public void Run(
-            [TimerTrigger("0 */5 * * * *" 
+            [TimerTrigger("0 0 */4 * * *" 
 #if DEBUG
             , RunOnStartup=true
 #endif

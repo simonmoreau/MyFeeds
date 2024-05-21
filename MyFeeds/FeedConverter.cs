@@ -41,12 +41,11 @@ namespace MyFeeds
                 foreach (Feed feed in feeds)
                 {
                     string fileName = $"{feed.FeedId}.xml";
-                    string filePath = $"{feed.FeedId}.xml";
                     BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
 
                     using (Stream stream = feed.WriteFeed())
                     {
-                        blobClient.Upload(stream);
+                        blobClient.Upload(stream,overwrite:true);
                     }
                 }
             }

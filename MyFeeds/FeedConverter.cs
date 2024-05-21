@@ -40,6 +40,7 @@ namespace MyFeeds
 
                 foreach (Feed feed in feeds)
                 {
+                    if (feed == null) continue;
                     string fileName = $"{feed.FeedId}.xml";
                     BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
 
@@ -73,16 +74,25 @@ namespace MyFeeds
                 tasks.Add(LoadFeed(feedType));
             }
 
-            List<Feed> feeds = (await Task.WhenAll<Feed>(tasks.ToArray())).ToList();
+            List<Feed> feeds = (await Task.WhenAll<Feed>(tasks.Where(t => t != null).ToArray())).ToList();
             return feeds;
         }
 
         private async Task<Feed> LoadFeed(Type feedType)
         {
-            Feed feed = (Feed)Activator.CreateInstance(feedType);
-            await feed.BuildFeed();
+            try
+            {
+                Feed feed = (Feed)Activator.CreateInstance(feedType);
+                await feed.BuildFeed();
 
-            return feed;
+                return feed;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return null;
+            }
+
         }
 
     }

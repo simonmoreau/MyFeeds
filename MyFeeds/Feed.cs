@@ -25,7 +25,7 @@ namespace MyFeeds
             FeedLink = "https://rnbsshrb6gtyyazfunctions.blob.core.windows.net/licences/" + this.FeedId + ".xml";
         }
 
-        public string WriteFeed()
+        public MemoryStream WriteFeed()
         {
             string feedLink = null;
 
@@ -59,12 +59,12 @@ namespace MyFeeds
             feed.Items = items;
 
             Rss20FeedFormatter rssFormatter = new Rss20FeedFormatter(feed, false);
-            StringBuilder output = new StringBuilder();
-            using (XmlWriter writer = XmlWriter.Create(output, new XmlWriterSettings { Indent = true }))
+            MemoryStream output = new MemoryStream();
+            using (XmlWriter writer = XmlWriter.Create(output))
             {
                 rssFormatter.WriteTo(writer);
                 writer.Flush();
-                return output.ToString();
+                return output;
             }
 
         }

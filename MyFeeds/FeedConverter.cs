@@ -19,13 +19,13 @@ namespace MyFeeds
         }
 
         [Function(nameof(FeedConverter))]
-        [BlobOutput("test-samples-output/output.xml")]
-        public string Run(
+        public void Run(
             [TimerTrigger("0 */5 * * * *" 
 #if DEBUG
             , RunOnStartup=true
 #endif
-            )] TimerInfo myTimer)
+            )] TimerInfo myTimer,
+            [BlobInput("test-samples-output")] BlobContainerClient blobContainerClient)
         {
             try
             {
@@ -38,30 +38,17 @@ namespace MyFeeds
 
                 List<Feed> feeds = GetAllFeeds();
 
-                // Get a connection string to your Azure Storage account
-                string connectionString = Environment.GetEnvironmentVariable("CUSTOMCONNSTR_DefaultConnection");
-
-                // Get a reference to the blob container where you want to upload the file
-                string containerName = "test-samples-output";
-                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-                // Upload the XML file to Azure Blob Storage
-
                 foreach (Feed feed in feeds)
                 {
                     string fileName = $"{feed.FeedId}.xml";
                     string filePath = $"{feed.FeedId}.xml";
-                    BlobClient blobClient = containerClient.GetBlobClient(fileName);
+                    BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
 
                     using (Stream stream = feed.WriteFeed())
                     {
                         blobClient.Upload(stream);
                     }
-                    
                 }
-
-
-                return "feeds";
             }
 
             catch (Exception ex)

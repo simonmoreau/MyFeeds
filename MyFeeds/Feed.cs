@@ -64,6 +64,7 @@ namespace MyFeeds
             {
                 rssFormatter.WriteTo(writer);
                 writer.Flush();
+                output.Position = 0;
                 return output;
             }
 

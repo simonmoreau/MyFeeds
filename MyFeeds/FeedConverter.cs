@@ -19,7 +19,7 @@ namespace MyFeeds
         }
 
         [Function(nameof(FeedConverter))]
-        public void Run(
+        public async Task Run(
             [TimerTrigger("0 0 */4 * * *" 
 #if DEBUG
             , RunOnStartup=true
@@ -36,7 +36,7 @@ namespace MyFeeds
                     _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
                 }
 
-                List<Feed> feeds = GetAllFeeds();
+                List<Feed> feeds = await GetAllFeeds();
 
                 foreach (Feed feed in feeds)
                 {
@@ -60,24 +60,31 @@ namespace MyFeeds
 
         }
 
-        private List<Feed> GetAllFeeds()
+        private async Task<List<Feed>> GetAllFeeds()
         {
-            List<Feed> feeds = new List<Feed>();
 
             Type type = typeof(Feed);
             List<Type> allFeedTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.Name != nameof(Feed)).ToList();
 
 
-
+            List<Task<Feed>> tasks = new List<Task<Feed>>();
+            
             foreach (Type feedType in allFeedTypes)
             {
-                Feed feed = (Feed)Activator.CreateInstance(feedType);
-                feeds.Add(feed);
+                tasks.Add(LoadFeed(feedType));
             }
 
+            List<Feed> feeds = (await Task.WhenAll<Feed>(tasks.ToArray())).ToList();
             return feeds;
         }
 
+        private async Task<Feed> LoadFeed(Type feedType)
+        {
+            Feed feed = (Feed)Activator.CreateInstance(feedType);
+            await feed.BuildFeed();
+
+            return feed;
+        }
 
     }
 }

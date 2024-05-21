@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace MyFeeds
 {
-    internal class Feed
+    internal abstract class Feed
     {
         internal readonly List<Article> Articles = new List<Article>();
         
@@ -25,9 +25,10 @@ namespace MyFeeds
             FeedLink = "https://rnbsshrb6gtyyazfunctions.blob.core.windows.net/licences/" + this.FeedId + ".xml";
         }
 
+        public abstract Task BuildFeed();
+
         public MemoryStream WriteFeed()
         {
-            string feedLink = null;
 
             SyndicationFeed feed = new SyndicationFeed(Title, Subtitle, new Uri(FeedLink), FeedId, DateTime.Now);
 
@@ -50,9 +51,14 @@ namespace MyFeeds
             foreach (Article article in Articles)
             {
                 TextSyndicationContent textContent = new TextSyndicationContent(article.Content);
-                SyndicationItem item = new SyndicationItem(article.Title, textContent, new Uri(article.Link), article.Id, article.Updated);
-                
-                
+                SyndicationItem item = new SyndicationItem(
+                    article.Title, textContent, new Uri(article.Link), article.Id, article.Updated);
+
+                item.Id = article.Id;
+                item.Summary = new TextSyndicationContent(article.Summary);
+                item.Categories.Add(new SyndicationCategory(article.Category));
+                item.Authors.Add(new SyndicationPerson(article.Author));
+
                 items.Add(item);
             }
 

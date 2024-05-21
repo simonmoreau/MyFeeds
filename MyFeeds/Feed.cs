@@ -50,12 +50,12 @@ namespace MyFeeds
 
             foreach (Article article in Articles)
             {
-                TextSyndicationContent textContent = new TextSyndicationContent(article.Content);
+                TextSyndicationContent textContent = new TextSyndicationContent(article.Content,TextSyndicationContentKind.Html);
                 SyndicationItem item = new SyndicationItem(
                     article.Title, textContent, new Uri(article.Link), article.Id, article.Updated);
 
                 item.Id = article.Id;
-                item.Summary = new TextSyndicationContent(article.Summary);
+                item.Summary = new TextSyndicationContent(article.Summary, TextSyndicationContentKind.Html);
                 item.Categories.Add(new SyndicationCategory(article.Category));
                 item.Authors.Add(new SyndicationPerson(article.Author));
 
@@ -64,7 +64,7 @@ namespace MyFeeds
 
             feed.Items = items;
 
-            Rss20FeedFormatter rssFormatter = new Rss20FeedFormatter(feed, false);
+            Atom10FeedFormatter rssFormatter = new Atom10FeedFormatter(feed);
             MemoryStream output = new MemoryStream();
             using (XmlWriter writer = XmlWriter.Create(output))
             {

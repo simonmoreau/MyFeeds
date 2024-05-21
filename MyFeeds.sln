@@ -5,6 +5,12 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFeeds", "MyFeeds\MyFeeds.csproj", "{BFDF99C1-BF82-40D6-901E-F48C6118F4B1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{01F3CFCB-F8A9-4943-8D50-AA09CD2C7AF2}"
+	ProjectSection(SolutionItems) = preProject
+		Deploy\Deploy.ps1 = Deploy\Deploy.ps1
+		Deploy\main.bicep = Deploy\main.bicep
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

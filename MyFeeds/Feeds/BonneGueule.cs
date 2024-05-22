@@ -64,7 +64,7 @@ namespace MyFeeds.Feeds
 
             HtmlDocument doc = await web.LoadFromWebAsync(link);
 
-            string ClassToGet = "articlePage--slices";
+            string ClassToGet = "bg-white position-relative";
             string xPath = @"//div[@class='" + ClassToGet + "']";
             HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
 

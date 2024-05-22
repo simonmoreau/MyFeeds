@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Globalization;
 
 namespace MyFeeds.Feeds
 {
@@ -79,7 +80,17 @@ namespace MyFeeds.Feeds
             string dateXpath = @"//div[@class='xxs6 text-left']";
             HtmlNode? dateNode = doc.DocumentNode.SelectNodes(dateXpath).FirstOrDefault();
             if (dateNode == null) return null;
-            string date = dateNode.InnerText.Split("Mis")[0].Replace("Publié le : ", "");
+            string dateText = dateNode.InnerText.Split("Mis")[0].Replace("Publié le : ", "");
+            DateTime date = DateTime.Now;
+            CultureInfo ci = new CultureInfo("fr-FR");
+
+            bool tryParse = DateTime.TryParse(dateText, ci, out date);
+            if (!tryParse)
+            {
+                DateTime.TryParseExact(dateText, "dd MMMM yyyy", ci, DateTimeStyles.None, out date);
+            }
+
+
 
             string authorXpath = @"//div[@class='xxs6 text-right']";
             HtmlNode? authorNode = doc.DocumentNode.SelectNodes(authorXpath).FirstOrDefault();
@@ -96,7 +107,7 @@ namespace MyFeeds.Feeds
                 Summary = title,
                 Content = content,
                 MediaLink = "",
-                Updated = DateTime.Parse(date),
+                Updated = date,
                 Category = "Lifestyle",
                 Author = author
             };

@@ -5,6 +5,7 @@ using System.Xml;
 using Azure.Storage.Blobs;
 using Google.Protobuf.Compiler;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace MyFeeds
@@ -12,10 +13,12 @@ namespace MyFeeds
     public class FeedConverter
     {
         private readonly ILogger _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public FeedConverter(ILoggerFactory loggerFactory)
+        public FeedConverter(ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             _logger = loggerFactory.CreateLogger<FeedConverter>();
+            _serviceProvider = serviceProvider;
         }
 
         [Function(nameof(FeedConverter))]
@@ -82,7 +85,7 @@ namespace MyFeeds
         {
             try
             {
-                Feed feed = (Feed)Activator.CreateInstance(feedType);
+                Feed feed = (Feed)ActivatorUtilities.CreateInstance(_serviceProvider, feedType);
                 await feed.BuildFeed();
 
                 return feed;

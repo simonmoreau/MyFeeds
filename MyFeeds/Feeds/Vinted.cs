@@ -26,16 +26,17 @@ namespace MyFeeds.Feeds
             this.WebLink = "https://www.vinted.com";
         }
 
-        public override async Task BuildFeed()
+        public override async Task<bool> BuildFeed()
         {
             List<Article> articles = await GetArticles();
             Articles.AddRange(articles);
+            return true;
         }
 
         private async Task<List<Article>> GetArticles()
         {
 
-            Task<IEnumerable<string>> test = _vintedClient.GetPosts();
+            IEnumerable<string> test = await _vintedClient.SearchItems();
 
             List<Article> articles = new List<Article>();
 

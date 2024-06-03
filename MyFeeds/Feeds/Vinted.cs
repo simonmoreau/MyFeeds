@@ -35,10 +35,15 @@ namespace MyFeeds.Feeds
 
         private async Task<List<Article>> GetArticles()
         {
-
-            IEnumerable<string> test = await _vintedClient.SearchItems();
-
             List<Article> articles = new List<Article>();
+
+            List<ItemSummary> items = await _vintedClient.SearchItems();
+
+            foreach (ItemSummary item in items) {
+                ItemDetail detailItem = await _vintedClient.GetItem(item.Id);
+            }
+
+            
 
             return articles;
         }

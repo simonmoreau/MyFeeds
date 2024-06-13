@@ -39,11 +39,29 @@ namespace MyFeeds.Feeds
 
             List<ItemSummary> items = await _vintedClient.SearchItems();
 
-            foreach (ItemSummary item in items) {
-                ItemDetail detailItem = await _vintedClient.GetItem(item.Id);
-            }
+            foreach (ItemSummary summaryItem in items.Take(2))
+            {
+                ItemDetail detailItem = await _vintedClient.GetItem(summaryItem.Id);
+                Item item = detailItem.Item;
 
-            
+                Article article = new Article
+                {
+                    Id = item.Url,
+                    HTMLTitle = item.Title + " " + item.SizeTitle + " " + item.Price,
+                    Title = item.Title + " " + item.SizeTitle + " " + item.Price,
+                    WebsiteUrl = item.Url,
+                    Link = item.Url,
+                    Summary = item.Title + " " + item.SizeTitle + " " + item.Price,
+                    Content = item.Description,
+                    MediaLink = "",
+                    Updated = item.UpdatedAtTs.Value,
+                    Category = "Clothes",
+                    Author = item.User.Login
+                };
+
+                articles.Add(article);
+
+            }
 
             return articles;
         }

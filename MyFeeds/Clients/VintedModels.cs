@@ -151,7 +151,7 @@ namespace MyFeeds.Clients
         public int IsHidden { get; set; }
 
         [JsonPropertyName("is_reserved")]
-        public int IsReserved { get; set; }
+        public bool IsReserved { get; set; }
 
         [JsonPropertyName("is_visible")]
         public int IsVisible { get; set; }
@@ -232,19 +232,19 @@ namespace MyFeeds.Clients
         public string PriceNumeric { get; set; }
 
         [JsonPropertyName("last_push_up_at")]
-        public DateTime LastPushUpAt { get; set; }
+        public DateTime? LastPushUpAt { get; set; }
 
         [JsonPropertyName("last_push_up_at_new")]
-        public DateTime LastPushUpAtNew { get; set; }
+        public DateTime? LastPushUpAtNew { get; set; }
 
         [JsonPropertyName("created_at_ts")]
-        public DateTime CreatedAtTs { get; set; }
+        public DateTime? CreatedAtTs { get; set; }
 
         [JsonPropertyName("updated_at_ts")]
-        public DateTime UpdatedAtTs { get; set; }
+        public DateTime? UpdatedAtTs { get; set; }
 
         [JsonPropertyName("user_updated_at_ts")]
-        public DateTime UserUpdatedAtTs { get; set; }
+        public DateTime? UserUpdatedAtTs { get; set; }
 
         [JsonPropertyName("is_delayed_publication")]
         public bool IsDelayedPublication { get; set; }
@@ -361,7 +361,7 @@ namespace MyFeeds.Clients
         public string UserLogin { get; set; }
 
         [JsonPropertyName("city_id")]
-        public int CityId { get; set; }
+        public int? CityId { get; set; }
 
         [JsonPropertyName("city")]
         public string City { get; set; }
@@ -674,7 +674,7 @@ namespace MyFeeds.Clients
         public DateTime LastLogedOnTs { get; set; }
 
         [JsonPropertyName("city_id")]
-        public int CityId { get; set; }
+        public int? CityId { get; set; }
 
         [JsonPropertyName("city")]
         public string City { get; set; }
@@ -916,7 +916,7 @@ namespace MyFeeds.Clients
         public bool Valid { get; set; }
 
         [JsonPropertyName("verified_at")]
-        public object VerifiedAt { get; set; }
+        public object? VerifiedAt { get; set; }
 
         [JsonPropertyName("available")]
         public bool Available { get; set; }
@@ -928,7 +928,7 @@ namespace MyFeeds.Clients
         public bool Valid { get; set; }
 
         [JsonPropertyName("verified_at")]
-        public DateTime VerifiedAt { get; set; }
+        public DateTime? VerifiedAt { get; set; }
 
         [JsonPropertyName("available")]
         public bool Available { get; set; }
@@ -950,7 +950,7 @@ namespace MyFeeds.Clients
         public bool Valid { get; set; }
 
         [JsonPropertyName("verified_at")]
-        public DateTime VerifiedAt { get; set; }
+        public DateTime? VerifiedAt { get; set; }
 
         [JsonPropertyName("available")]
         public bool Available { get; set; }

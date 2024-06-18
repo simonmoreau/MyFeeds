@@ -1,0 +1,16 @@
+﻿
+<div>
+    <h1>{{Title}} - {{TotalItemPrice}} {{Currency}} - {{Size}}</h1>
+    <h3>{{CatalogBranchTitle}}</h3>
+    <h3>{{Brand}}</h3>
+    <h3>{{Composition}}</h3>
+    <h3>{{Status}}</h3>
+    <p>{{Description}}</p>
+
+    {% for photo in Photos %}
+    <div>
+        <img src="{{photo.Url}}" width="{{photo.Width}}" height="{{photo.Height}}">
+    </div>
+    {% endfor %}
+
+</div>

@@ -142,16 +142,16 @@ namespace MyFeeds.Clients
         public int Color1Id { get; set; }
 
         [JsonPropertyName("color2_id")]
-        public object Color2Id { get; set; }
+        public object? Color2Id { get; set; }
 
         [JsonPropertyName("package_size_id")]
         public int PackageSizeId { get; set; }
 
         [JsonPropertyName("is_hidden")]
-        public int IsHidden { get; set; }
+        public object IsHidden { get; set; }
 
         [JsonPropertyName("is_reserved")]
-        public bool IsReserved { get; set; }
+        public object? IsReserved { get; set; }
 
         [JsonPropertyName("is_visible")]
         public int IsVisible { get; set; }
@@ -506,7 +506,7 @@ namespace MyFeeds.Clients
         public string FullSizeUrl { get; set; }
 
         [JsonPropertyName("is_hidden")]
-        public bool IsHidden { get; set; }
+        public object IsHidden { get; set; }
 
         [JsonPropertyName("extra")]
         public Extra Extra { get; set; }
@@ -995,7 +995,7 @@ namespace MyFeeds.Clients
         public string FullSizeUrl { get; set; }
 
         [JsonPropertyName("is_hidden")]
-        public bool IsHidden { get; set; }
+        public object IsHidden { get; set; }
 
         [JsonPropertyName("extra")]
         public Extra Extra { get; set; }

@@ -10,6 +10,8 @@ IHost host = new HostBuilder()
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
+        services.AddScoped<VintedDelegatingHandler>();
+        services.AddHttpClient<VintedAuthenticationClient>();
         services.AddHttpClient<VintedClient>()
         .ConfigurePrimaryHttpMessageHandler(
             () => new HttpClientHandler() { UseCookies = false }

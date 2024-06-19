@@ -71,11 +71,11 @@ namespace MyFeeds.Feeds
                 Article article = new Article
                 {
                     Id = item.Url,
-                    HTMLTitle = item.Title + " " + item.SizeTitle + " " + item.Price,
-                    Title = item.Title + " " + item.SizeTitle + " " + item.Price,
+                    HTMLTitle = item.Title + " " + item.SizeTitle + " " + item.Price.Amount + " " + item.Price.CurrencyCode,
+                    Title = item.Title + " " + item.SizeTitle + " " + item.Price.Amount + " " + item.Price.CurrencyCode,
                     WebsiteUrl = item.Url,
                     Link = item.Url,
-                    Summary = item.Title + " " + item.SizeTitle + " " + item.Price,
+                    Summary = item.Title + " " + item.SizeTitle + " " + item.Price.Amount + " " + item.Price.CurrencyCode,
                     Content = BuildContent(item),
                     MediaLink = "",
                     Updated = item.UpdatedAtTs.Value,

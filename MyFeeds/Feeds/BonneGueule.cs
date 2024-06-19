@@ -9,12 +9,17 @@ using System.Xml;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Globalization;
+using Microsoft.Extensions.Logging;
 
 namespace MyFeeds.Feeds
 {
     public class BonneGueule : FeedBuilder
     {
         private string _webLink;
+
+        public BonneGueule(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        {
+        }
 
         public override async Task<List<Feed>> GetFeeds()
         {

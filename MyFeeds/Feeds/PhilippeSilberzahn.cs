@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace MyFeeds.Feeds
 {
     public class PhilippeSilberzahn : FeedBuilder
     {
+        public PhilippeSilberzahn(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        {
+        }
 
         public override async Task<List<Feed>> GetFeeds()
         {

@@ -18,68 +18,96 @@ namespace MyFeeds
 {
     public abstract class FeedBuilder
     {
+        private readonly ILogger _logger;
+        private readonly IServiceProvider _serviceProvider;
+        public FeedBuilder(ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+        {
+            _logger = loggerFactory.CreateLogger<FeedConverter>();
+            _serviceProvider = serviceProvider;
+        }
+
         public abstract Task<List<Feed>> GetFeeds();
 
         public async Task WriteFeeds(BlobContainerClient blobContainerClient)
         {
-            List<Feed> feeds = await GetFeeds();
+            List<Feed> feeds = new List<Feed>();
+            try
+            {
+                feeds.AddRange(await GetFeeds());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return;
+            }
 
             foreach (Feed feed in feeds)
             {
-                SyndicationFeed syndicationFeed = new SyndicationFeed(feed.Title, feed.Subtitle, new Uri(feed.Link), feed.Id, DateTime.Now);
-
-                SyndicationPerson sp = new SyndicationPerson("simon@bim42.com", "Simon Moreau", "");
-                syndicationFeed.Authors.Add(sp);
-
-                syndicationFeed.Description = new TextSyndicationContent(feed.Subtitle);
-
-                syndicationFeed.Generator = "MyFeeds";
-                syndicationFeed.Id = feed.Id;
-                syndicationFeed.ImageUrl = new Uri("http://server/image.jpg");
-                syndicationFeed.Language = "en-us";
-                syndicationFeed.LastUpdatedTime = DateTime.Now;
-
-                SyndicationLink link = new SyndicationLink(new Uri(feed.Link), "alternate", "Link Title", "text/html", 1000);
-                syndicationFeed.Links.Add(link);
-
-                List<SyndicationItem> items = new List<SyndicationItem>();
-
-                foreach (Article article in feed.Articles)
+                try
                 {
-                    TextSyndicationContent textContent = new TextSyndicationContent(article.Content, TextSyndicationContentKind.Html);
-                    SyndicationItem item = new SyndicationItem(
-                        article.Title, textContent, new Uri(article.Link), article.Id, article.Updated);
-
-                    item.Id = article.Id;
-                    item.Summary = new TextSyndicationContent(article.Summary, TextSyndicationContentKind.Html);
-                    item.Categories.Add(new SyndicationCategory(article.Category));
-                    item.Authors.Add(new SyndicationPerson(article.Author));
-
-                    items.Add(item);
+                    WriteFeed(blobContainerClient, feed);
                 }
-
-                syndicationFeed.Items = items;
-
-                Atom10FeedFormatter rssFormatter = new Atom10FeedFormatter(syndicationFeed);
-                MemoryStream output = new MemoryStream();
-                using (XmlWriter writer = XmlWriter.Create(output))
+                catch (Exception ex)
                 {
-                    rssFormatter.WriteTo(writer);
-                    writer.Flush();
-                    output.Position = 0;
-
-                    string fileName = $"{feed.Id}.xml";
-                    BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
-
-                    using (Stream stream = output)
-                    {
-                        blobClient.Upload(stream, overwrite: true);
-                    }
-
+                    _logger.LogError(ex, ex.Message, feed.Id);
+                    continue;
                 }
             }
+        }
 
+        private void WriteFeed(BlobContainerClient blobContainerClient, Feed feed)
+        {
+            SyndicationFeed syndicationFeed = new SyndicationFeed(feed.Title, feed.Subtitle, new Uri(feed.Link), feed.Id, DateTime.Now);
 
+            SyndicationPerson sp = new SyndicationPerson("simon@bim42.com", "Simon Moreau", "");
+            syndicationFeed.Authors.Add(sp);
+
+            syndicationFeed.Description = new TextSyndicationContent(feed.Subtitle);
+
+            syndicationFeed.Generator = "MyFeeds";
+            syndicationFeed.Id = feed.Id;
+            syndicationFeed.ImageUrl = new Uri("http://server/image.jpg");
+            syndicationFeed.Language = "en-us";
+            syndicationFeed.LastUpdatedTime = DateTime.Now;
+
+            SyndicationLink link = new SyndicationLink(new Uri(feed.Link), "alternate", "Link Title", "text/html", 1000);
+            syndicationFeed.Links.Add(link);
+
+            List<SyndicationItem> items = new List<SyndicationItem>();
+
+            foreach (Article article in feed.Articles)
+            {
+                TextSyndicationContent textContent = new TextSyndicationContent(article.Content, TextSyndicationContentKind.Html);
+                SyndicationItem item = new SyndicationItem(
+                    article.Title, textContent, new Uri(article.Link), article.Id, article.Updated);
+
+                item.Id = article.Id;
+                item.Summary = new TextSyndicationContent(article.Summary, TextSyndicationContentKind.Html);
+                item.Categories.Add(new SyndicationCategory(article.Category));
+                item.Authors.Add(new SyndicationPerson(article.Author));
+
+                items.Add(item);
+            }
+
+            syndicationFeed.Items = items;
+
+            Atom10FeedFormatter rssFormatter = new Atom10FeedFormatter(syndicationFeed);
+            MemoryStream output = new MemoryStream();
+            using (XmlWriter writer = XmlWriter.Create(output))
+            {
+                rssFormatter.WriteTo(writer);
+                writer.Flush();
+                output.Position = 0;
+
+                string fileName = $"{feed.Id}.xml";
+                BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
+
+                using (Stream stream = output)
+                {
+                    blobClient.Upload(stream, overwrite: true);
+                }
+
+            }
         }
     }
 }

@@ -52,7 +52,7 @@ namespace MyFeeds
         private async Task GetAllFeedBuilders(BlobContainerClient blobContainerClient)
         {
 
-            Type type = typeof(Feed);
+            Type type = typeof(FeedBuilder);
             List<Type> allFeedTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.Name != nameof(FeedBuilder)).ToList();
 
             List<Task> tasks = new List<Task>();

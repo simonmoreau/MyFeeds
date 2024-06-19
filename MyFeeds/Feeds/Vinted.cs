@@ -14,6 +14,7 @@ using Fluid;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Azure.Functions.Worker;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace MyFeeds.Feeds
 {
@@ -21,10 +22,10 @@ namespace MyFeeds.Feeds
     {
         private readonly VintedClient _vintedClient;
 
-        public Vinted(VintedClient vintedClient)
+        public Vinted(VintedClient vintedClient, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
         {
             _vintedClient = vintedClient;
-        }   
+        }
 
         public override async Task<List<Feed>> GetFeeds()
         {

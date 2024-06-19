@@ -21,7 +21,7 @@ namespace MyFeeds
             Title = title;
             Subtitle = subtitle;
             WebLink = webLink;
-            Id = GetType().Name;
+            Id = title.ToLower().Replace(" ","");
             Link = "https://rnbsshrb6gtyyazfunctions.blob.core.windows.net/licences/" + this.Id + ".xml";
         }
 

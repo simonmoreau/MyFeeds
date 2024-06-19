@@ -8,12 +8,17 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace MyFeeds.Feeds
 {
     public class TheSocialiteFamily : FeedBuilder   
     {
         private string _webLink;
+
+        public TheSocialiteFamily(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        {
+        }
 
         public override async Task<List<Feed>> GetFeeds()
         {

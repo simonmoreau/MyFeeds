@@ -22,9 +22,10 @@ namespace MyFeeds.Clients
             Client = client;
         }
 
-        public async Task<List<ItemSummary>> SearchItems()
+        public async Task<List<ItemSummary>> SearchItems(int itemNumber, string searchRoute)
         {
-            HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, "api/v2/catalog/items?page=1&per_page=96&search_text=Inis+Me%C3%A1in&catalog_ids=2050&size_ids=207,208,209&brand_ids=&status_ids=&color_ids=&material_ids=&order=newest_first");
+            string baseRoute = $"api/v2/catalog/items?page=1&per_page={itemNumber.ToString()}";
+            HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, $"{baseRoute}&{searchRoute}&order=newest_first");
 
             HttpResponseMessage response = await Client.SendAsync(message);
             response.EnsureSuccessStatusCode();

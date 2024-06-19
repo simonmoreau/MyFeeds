@@ -33,22 +33,37 @@ namespace MyFeeds.Feeds
             string Subtitle = "Rejoins la communauté de mode de seconde main qui compte plus de 65 millions de membres.";
             string _webLink = "https://www.vinted.com";
 
-            Feed feed = new Feed(Title, Subtitle, _webLink);
-            List<Article> articles = await GetArticles();
-            feed.Articles.AddRange(articles);
+            Dictionary<string, string> vintedFeedsInputs = new Dictionary<string, string>();
+            List<Feed> vintedFeeds = new List<Feed>();
 
-            return new List<Feed>() { feed };
+            vintedFeedsInputs.Add("entoile", "search_text=entoil%C3%A9&catalog[]=32&size_ids[]=1594&size_ids[]=1595&size_ids[]=1610&size_ids[]=1611");
+            vintedFeedsInputs.Add("sebago-beige", "search_text=&catalog[]=2656&color_ids[]=4&color_ids[]=20&size_ids[]=782&size_ids[]=784&size_ids[]=785&brand_ids[]=20413");
+
+            foreach (KeyValuePair<string, string> item in vintedFeedsInputs)
+            {
+                Feed feed = new Feed(Title + "-" + item.Key, Subtitle, _webLink+"/"+item.Value);
+
+                List<Article> articles = await GetArticles(item.Value);
+                feed.Articles.AddRange(articles);
+
+                vintedFeeds.Add(feed);
+
+            }
+
+
+            return vintedFeeds;
         }
 
-        private async Task<List<Article>> GetArticles()
+        private async Task<List<Article>> GetArticles(string searchRoute)
         {
             List<Article> articles = new List<Article>();
+            int itemNumber = 15;
 
-            List<ItemSummary> items = await _vintedClient.SearchItems();
+            List<ItemSummary> items = await _vintedClient.SearchItems(itemNumber, searchRoute);
 
             // 20 passe
             // 50 ne passe pas
-            foreach (ItemSummary summaryItem in items.Take(20))
+            foreach (ItemSummary summaryItem in items.Take(itemNumber))
             {
                 ItemDetail detailItem = await _vintedClient.GetItem(summaryItem.Id);
                 Item item = detailItem.Item;

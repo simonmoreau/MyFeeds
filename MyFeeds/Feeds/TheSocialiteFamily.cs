@@ -16,7 +16,7 @@ namespace MyFeeds.Feeds
     {
         private string _webLink;
 
-        public TheSocialiteFamily(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        public TheSocialiteFamily(ILoggerFactory loggerFactory) : base(loggerFactory)
         {
         }
 

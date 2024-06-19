@@ -12,7 +12,7 @@ namespace MyFeeds.Feeds
 {
     internal class Batirama : FeedBuilder
     {
-        public Batirama(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        public Batirama(ILoggerFactory loggerFactory) : base(loggerFactory)
         {
         }
 

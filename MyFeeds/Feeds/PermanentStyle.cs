@@ -12,7 +12,7 @@ namespace MyFeeds.Feeds
 {
     public class PermanentStyle : FeedBuilder
     {
-        public PermanentStyle(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        public PermanentStyle(ILoggerFactory loggerFactory) : base(loggerFactory)
         {
         }
 

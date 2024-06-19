@@ -12,7 +12,7 @@ namespace MyFeeds.Feeds
 {
     public class PhilippeSilberzahn : FeedBuilder
     {
-        public PhilippeSilberzahn(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        public PhilippeSilberzahn(ILoggerFactory loggerFactory ) : base(loggerFactory)
         {
         }
 

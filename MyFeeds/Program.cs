@@ -13,7 +13,8 @@ IHost host = new HostBuilder()
         services.AddHttpClient<VintedClient>()
         .ConfigurePrimaryHttpMessageHandler(
             () => new HttpClientHandler() { UseCookies = false }
-            );
+            )
+        .AddHttpMessageHandler<VintedDelegatingHandler>();
     })
     .Build();
 

@@ -19,11 +19,9 @@ namespace MyFeeds
     public abstract class FeedBuilder
     {
         private readonly ILogger _logger;
-        private readonly IServiceProvider _serviceProvider;
-        public FeedBuilder(ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+        public FeedBuilder(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<FeedConverter>();
-            _serviceProvider = serviceProvider;
         }
 
         public abstract Task<List<Feed>> GetFeeds();

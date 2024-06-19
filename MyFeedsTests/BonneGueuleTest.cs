@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using MyFeeds.Feeds;
 
 
@@ -8,7 +9,7 @@ namespace MyFeedsTests
         [Fact]
         public async Task Load()
         {
-            BonneGueule bonneGueule = new MyFeeds.Feeds.BonneGueule();
+            BonneGueule bonneGueule = new MyFeeds.Feeds.BonneGueule(new NullLoggerFactory());
             List<MyFeeds.Feed> feeds = await bonneGueule.GetFeeds();
 
             Assert.True(feeds.First().Articles.Count > 0);

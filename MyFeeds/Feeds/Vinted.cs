@@ -22,7 +22,7 @@ namespace MyFeeds.Feeds
     {
         private readonly VintedClient _vintedClient;
 
-        public Vinted(VintedClient vintedClient, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        public Vinted(VintedClient vintedClient, ILoggerFactory loggerFactory ) : base(loggerFactory)
         {
             _vintedClient = vintedClient;
         }

@@ -17,7 +17,7 @@ namespace MyFeeds.Feeds
     {
         private string _webLink;
 
-        public BonneGueule(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
+        public BonneGueule(ILoggerFactory loggerFactory) : base(loggerFactory)
         {
         }
 

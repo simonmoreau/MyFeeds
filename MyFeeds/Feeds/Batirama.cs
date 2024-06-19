@@ -9,19 +9,19 @@ using System.Xml;
 
 namespace MyFeeds.Feeds
 {
-    internal class Batirama : Feed
+    internal class Batirama : FeedBuilder
     {
-        public Batirama() : base()
+        public override async Task<List<Feed>> GetFeeds()
         {
-            Title = "Batirama";
-            Subtitle = "Retrouvez l'intégralité de l'actualité de Batirama en temps réel";
-            WebLink = "https://www.batirama.com/";
-        }
+            string Title = "Batirama";
+            string Subtitle = "Retrouvez l'intégralité de l'actualité de Batirama en temps réel";
+            string WebLink = "https://www.batirama.com/";
 
-        public override async Task BuildFeed()
-        {
+            Feed feed = new Feed(Title, Subtitle, WebLink);
             List<Article> articles = await GetArticles();
-            Articles.AddRange(articles);
+            feed.Articles.AddRange(articles);
+
+            return new List<Feed>() { feed };
         }
 
         private async Task<List<Article>> GetArticles()

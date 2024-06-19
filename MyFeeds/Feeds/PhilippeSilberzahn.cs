@@ -9,19 +9,20 @@ using System.Xml;
 
 namespace MyFeeds.Feeds
 {
-    internal class PhilippeSilberzahn : Feed
+    public class PhilippeSilberzahn : FeedBuilder
     {
-        public PhilippeSilberzahn() : base()
-        {
-            this.Title = "Le blog de Philippe Silberzahn";
-            this.Subtitle = "Innovation, entrepreneuriat, surprises stratégiques et ruptures: L'incertitude nous rend libres";
-            this.WebLink = "https://philippesilberzahn.com/";
-        }
 
-        public override async Task BuildFeed()
+        public override async Task<List<Feed>> GetFeeds()
         {
+            string Title = "Le blog de Philippe Silberzahn";
+            string Subtitle = "Innovation, entrepreneuriat, surprises stratégiques et ruptures: L'incertitude nous rend libres";
+            string WebLink = "https://philippesilberzahn.com/";
+
+            Feed feed = new Feed(Title, Subtitle, WebLink);
             List<Article> articles = await GetArticles();
-            Articles.AddRange(articles);
+            feed.Articles.AddRange(articles);
+
+            return new List<Feed>() { feed };
         }
 
         private async Task<List<Article>> GetArticles()

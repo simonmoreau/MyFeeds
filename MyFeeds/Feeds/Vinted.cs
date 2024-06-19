@@ -17,24 +17,26 @@ using System.Reflection;
 
 namespace MyFeeds.Feeds
 {
-    public class Vinted : Feed
+    public class Vinted : FeedBuilder
     {
         private readonly VintedClient _vintedClient;
 
-        public Vinted(VintedClient vintedClient) : base()
+        public Vinted(VintedClient vintedClient)
         {
             _vintedClient = vintedClient;
-            this.Title = "Vinted";
-            this.Subtitle = "Rejoins la communauté de mode de seconde main qui compte plus de 65 millions de membres.";
-            this.WebLink = "https://www.vinted.com";
+        }   
 
-        }
-
-        public override async Task<bool> BuildFeed()
+        public override async Task<List<Feed>> GetFeeds()
         {
+            string Title = "Vinted";
+            string Subtitle = "Rejoins la communauté de mode de seconde main qui compte plus de 65 millions de membres.";
+            string _webLink = "https://www.vinted.com";
+
+            Feed feed = new Feed(Title, Subtitle, _webLink);
             List<Article> articles = await GetArticles();
-            Articles.AddRange(articles);
-            return true;
+            feed.Articles.AddRange(articles);
+
+            return new List<Feed>() { feed };
         }
 
         private async Task<List<Article>> GetArticles()

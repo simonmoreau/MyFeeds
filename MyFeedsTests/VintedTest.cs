@@ -12,9 +12,9 @@ namespace MyFeedsTests
             HttpClientHandler httpClientHandler = new HttpClientHandler() { UseCookies = false };
             VintedClient vintedClient = new VintedClient(new HttpClient(httpClientHandler));
             Vinted vinted = new MyFeeds.Feeds.Vinted(vintedClient);
-            bool result = await vinted.BuildFeed();
+            List<MyFeeds.Feed> feeds = await vinted.GetFeeds();
 
-            Assert.True(vinted.Articles.Count > 0);
+            Assert.True(feeds.First().Articles.Count > 0);
 
         }
     }

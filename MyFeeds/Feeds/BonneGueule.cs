@@ -12,19 +12,21 @@ using System.Globalization;
 
 namespace MyFeeds.Feeds
 {
-    public class BonneGueule : Feed
+    public class BonneGueule : FeedBuilder
     {
-        public BonneGueule() : base()
-        {
-            this.Title = "Bonne Gueule";
-            this.Subtitle = "Marque de mode pour homme, nos vêtements sont confectionnés en Europe auprès des plus beaux savoir-faire.";
-            this.WebLink = "https://www.bonnegueule.fr";
-        }
+        private string _webLink;
 
-        public override async Task BuildFeed()
+        public override async Task<List<Feed>> GetFeeds()
         {
+            string Title = "Bonne Gueule";
+            string Subtitle = "Marque de mode pour homme, nos vêtements sont confectionnés en Europe auprès des plus beaux savoir-faire.";
+            _webLink = "https://www.bonnegueule.fr";
+
+            Feed feed = new Feed(Title, Subtitle, _webLink);
             List<Article> articles = await GetArticles();
-            Articles.AddRange(articles);
+            feed.Articles.AddRange(articles);
+
+            return new List<Feed>() { feed };
         }
 
         private async Task<List<Article>> GetArticles()
@@ -45,7 +47,7 @@ namespace MyFeeds.Feeds
             foreach (HtmlNode? node in htmlNodes)
             {
                 HtmlNode linkNode = node.SelectSingleNode("./a");
-                string link = WebLink + linkNode.Attributes["href"].Value;
+                string link = _webLink + linkNode.Attributes["href"].Value;
                 tasksArticles.Add(GetArticle(link));
             }
 

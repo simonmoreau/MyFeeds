@@ -9,9 +9,9 @@ namespace MyFeedsTests
         public async Task Load()
         {
             BonneGueule bonneGueule = new MyFeeds.Feeds.BonneGueule();
-            await bonneGueule.BuildFeed();
+            List<MyFeeds.Feed> feeds = await bonneGueule.GetFeeds();
 
-            Assert.True(bonneGueule.Articles.Count > 0);
+            Assert.True(feeds.First().Articles.Count > 0);
 
         }
     }

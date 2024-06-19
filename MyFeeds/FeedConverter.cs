@@ -14,7 +14,6 @@ namespace MyFeeds
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-
         public FeedConverter(ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             _logger = loggerFactory.CreateLogger<FeedConverter>();
@@ -39,21 +38,8 @@ namespace MyFeeds
                     _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
                 }
 
-                List<Feed> feeds = await GetAllFeeds();
-
-                foreach (Feed feed in feeds)
-                {
-                    if (feed == null) continue;
-                    string fileName = $"{feed.FeedId}.xml";
-                    BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
-
-                    using (Stream stream = feed.WriteFeed())
-                    {
-                        blobClient.Upload(stream,overwrite:true);
-                    }
-                }
+                await GetAllFeedBuilders(blobContainerClient);
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex,ex.Message);
@@ -63,40 +49,25 @@ namespace MyFeeds
 
         }
 
-        private async Task<List<Feed>> GetAllFeeds()
+        private async Task GetAllFeedBuilders(BlobContainerClient blobContainerClient)
         {
 
             Type type = typeof(Feed);
-            List<Type> allFeedTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.Name != nameof(Feed)).ToList();
+            List<Type> allFeedTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p => type.IsAssignableFrom(p) && p.Name != nameof(FeedBuilder)).ToList();
 
-
-            List<Task<Feed>> tasks = new List<Task<Feed>>();
+            List<Task> tasks = new List<Task>();
             
             foreach (Type feedType in allFeedTypes)
             {
-                tasks.Add(LoadFeed(feedType));
+                FeedBuilder builder = (FeedBuilder)ActivatorUtilities.CreateInstance(_serviceProvider, feedType);
+                Task writeFeedTask = builder.WriteFeeds(blobContainerClient);
+
+                tasks.Add(writeFeedTask);
             }
 
-            List<Feed> feeds = (await Task.WhenAll<Feed>(tasks.Where(t => t != null).ToArray())).ToList();
-            return feeds;
+            await Task.WhenAll(tasks);
         }
 
-        private async Task<Feed> LoadFeed(Type feedType)
-        {
-            try
-            {
-                Feed feed = (Feed)ActivatorUtilities.CreateInstance(_serviceProvider, feedType);
-                await feed.BuildFeed();
-
-                return feed;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return null;
-            }
-
-        }
 
     }
 }

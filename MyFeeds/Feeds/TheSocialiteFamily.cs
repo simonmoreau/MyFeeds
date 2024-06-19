@@ -11,19 +11,21 @@ using System.Text.Json.Serialization;
 
 namespace MyFeeds.Feeds
 {
-    public class TheSocialiteFamily : Feed
+    public class TheSocialiteFamily : FeedBuilder   
     {
-        public TheSocialiteFamily() : base()
-        {
-            this.Title = "The Socialite Family";
-            this.Subtitle = "Each week, dive into the captivating worlds of inspiring family interiors.";
-            this.WebLink = "https://www.thesocialitefamily.com";
-        }
+        private string _webLink;
 
-        public override async Task BuildFeed()
+        public override async Task<List<Feed>> GetFeeds()
         {
+            string Title = "The Socialite Family";
+            string Subtitle = "Each week, dive into the captivating worlds of inspiring family interiors.";
+            _webLink = "https://www.thesocialitefamily.com";
+
+            Feed feed = new Feed(Title, Subtitle, _webLink);
             List<Article> articles = await GetArticles();
-            Articles.AddRange(articles);
+            feed.Articles.AddRange(articles);
+
+            return new List<Feed>() { feed };
         }
 
         private async Task<List<Article>> GetArticles()
@@ -43,7 +45,7 @@ namespace MyFeeds.Feeds
             List<Task<Article>> tasksArticles = new List<Task<Article>>();
             foreach (HtmlNode? node in htmlNodes)
             {
-                string link = WebLink + node.Attributes["href"].Value;
+                string link = _webLink + node.Attributes["href"].Value;
                 tasksArticles.Add(GetArticle(link));
             }
 

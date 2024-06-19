@@ -1,3 +1,4 @@
+using MyFeeds;
 using MyFeeds.Feeds;
 
 
@@ -9,9 +10,9 @@ namespace MyFeedsTests
         public async Task Load()
         {
             TheSocialiteFamily theSocialiteFamily = new MyFeeds.Feeds.TheSocialiteFamily();
-            await theSocialiteFamily.BuildFeed();
+            List<MyFeeds.Feed> feeds = await theSocialiteFamily.GetFeeds();
 
-            Assert.True(theSocialiteFamily.Articles.Count > 0);
+            Assert.True(feeds.First().Articles.Count > 0);
 
         }
     }

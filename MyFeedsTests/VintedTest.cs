@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MyFeeds.Clients;
 using MyFeeds.Feeds;
+using MyFeeds.Utilities;
 
 
 namespace MyFeedsTests
@@ -19,9 +20,14 @@ namespace MyFeedsTests
 
             VintedDelegatingHandler vintedDelegatingHandler = new VintedDelegatingHandler(httpClientHandler, vintedAuthenticationClient, logger );
             VintedClient vintedClient = new VintedClient(new HttpClient(vintedDelegatingHandler));
-            Vinted vinted = new MyFeeds.Feeds.Vinted(vintedClient, new NullLoggerFactory());
+
+            CycleManager cycleManager = new CycleManager();
+            cycleManager.CycleNumber = 1;
+
+            Vinted vinted = new MyFeeds.Feeds.Vinted(vintedClient, new NullLoggerFactory(), cycleManager);
             List<MyFeeds.Feed> feeds = await vinted.GetFeeds();
 
+            Assert.Single(feeds);
             Assert.True(feeds.First().Articles.Count > 0);
 
         }

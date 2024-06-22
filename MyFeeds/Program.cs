@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyFeeds.Clients;
+using MyFeeds.Utilities;
 using System.Net;
 
 IHost host = new HostBuilder()
@@ -11,6 +12,7 @@ IHost host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.AddScoped<VintedDelegatingHandler>();
+        services.AddScoped<CycleManager>();
         services.AddHttpClient<VintedAuthenticationClient>();
         services.AddHttpClient<VintedClient>()
         .ConfigurePrimaryHttpMessageHandler(

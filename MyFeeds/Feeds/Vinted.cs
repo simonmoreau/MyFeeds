@@ -15,16 +15,19 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Azure.Functions.Worker;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
+using MyFeeds.Utilities;
 
 namespace MyFeeds.Feeds
 {
     public class Vinted : FeedBuilder
     {
         private readonly VintedClient _vintedClient;
+        private readonly CycleManager _cycleManager;
 
-        public Vinted(VintedClient vintedClient, ILoggerFactory loggerFactory ) : base(loggerFactory)
+        public Vinted(VintedClient vintedClient, ILoggerFactory loggerFactory, CycleManager cycleManager ) : base(loggerFactory)
         {
             _vintedClient = vintedClient;
+            _cycleManager = cycleManager;
         }
 
         public override async Task<List<Feed>> GetFeeds()
@@ -37,20 +40,28 @@ namespace MyFeeds.Feeds
             List<Feed> vintedFeeds = new List<Feed>();
 
             vintedFeedsInputs.Add("entoile", "search_text=entoil%C3%A9&catalog[]=32&size_ids[]=1594&size_ids[]=1595&size_ids[]=1610&size_ids[]=1611");
-            vintedFeedsInputs.Add("sebago-beige", "search_text=&catalog[]=2656&color_ids[]=4&color_ids[]=20&size_ids[]=782&size_ids[]=784&size_ids[]=785&brand_ids[]=20413");
-            //vintedFeedsInputs.Add("blazer-blue", "catalog[]=1786&size_ids[]=1610&size_ids[]=1611&size_ids[]=1612&color_ids[]=27&color_ids[]=9&material_ids[]=122&material_ids[]=123&material_ids[]=451&material_ids[]=46&material_ids[]=146&material_ids[]=121&material_ids[]=49");
-            //vintedFeedsInputs.Add("boggi-milano", "catalog[]=2050&size_ids[]=207&size_ids[]=208&size_ids[]=1637&size_ids[]=1638&size_ids[]=1639&size_ids[]=1651&size_ids[]=1652&size_ids[]=1546&size_ids[]=1547&size_ids[]=1387&size_ids[]=1594&size_ids[]=1595&size_ids[]=1610&size_ids[]=1611&brand_ids[]=260704&brand_ids[]=365244");
-            //vintedFeedsInputs.Add("suitsupply", "catalog[]=2050&size_ids[]=207&size_ids[]=208&size_ids[]=1637&size_ids[]=1638&size_ids[]=1639&size_ids[]=1651&size_ids[]=1652&size_ids[]=1546&size_ids[]=1547&size_ids[]=1387&size_ids[]=1594&size_ids[]=1595&size_ids[]=1610&size_ids[]=1611&brand_ids[]=316774");
+            vintedFeedsInputs.Add("sebago-beige", "catalog[]=2656&color_ids[]=4&color_ids[]=20&size_ids[]=784&size_ids[]=785&brand_ids[]=20413");
+            vintedFeedsInputs.Add("blazer-blue", "catalog[]=1786&size_ids[]=1610&size_ids[]=1611&size_ids[]=1612&color_ids[]=27&color_ids[]=9&material_ids[]=122&material_ids[]=123&material_ids[]=451&material_ids[]=46&material_ids[]=146&material_ids[]=121&material_ids[]=49");
+            vintedFeedsInputs.Add("boggi-milano", "catalog[]=2050&size_ids[]=207&size_ids[]=208&size_ids[]=1637&size_ids[]=1638&size_ids[]=1639&size_ids[]=1651&size_ids[]=1652&size_ids[]=1546&size_ids[]=1547&size_ids[]=1387&size_ids[]=1594&size_ids[]=1610&size_ids[]=1611&brand_ids[]=260704&brand_ids[]=365244");
+            vintedFeedsInputs.Add("suitsupply", "catalog[]=2050&size_ids[]=207&size_ids[]=208&size_ids[]=1637&size_ids[]=1638&size_ids[]=1639&size_ids[]=1651&size_ids[]=1652&size_ids[]=1546&size_ids[]=1547&size_ids[]=1387&size_ids[]=1594&size_ids[]=1610&size_ids[]=1611&brand_ids[]=316774");
+            vintedFeedsInputs.Add("pini-parma", "catalog[]=2050&size_ids[]=207&size_ids[]=208&size_ids[]=1637&size_ids[]=1638&size_ids[]=1639&size_ids[]=1651&size_ids[]=1652&size_ids[]=1546&size_ids[]=1547&size_ids[]=1387&size_ids[]=1594&size_ids[]=1610&size_ids[]=1611&brand_ids[]=639854");
 
+            
+            int i = 0;
             foreach (KeyValuePair<string, string> item in vintedFeedsInputs)
             {
+                if (!_cycleManager.CanRun(i, vintedFeedsInputs.Count))
+                {
+                    i++;
+                    continue;
+                }
                 Feed feed = new Feed(Title + "-" + item.Key, Subtitle, _webLink+"/"+item.Value);
 
                 List<Article> articles = await GetArticles(item.Value);
                 feed.Articles.AddRange(articles);
 
                 vintedFeeds.Add(feed);
-
+                i++;
             }
 
 

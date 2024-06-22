@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Configuration;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
@@ -18,16 +19,19 @@ namespace MyFeeds
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        public FeedConverter(ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+        private readonly CycleManager _cycleManager;
+
+        public FeedConverter(ILoggerFactory loggerFactory, IServiceProvider serviceProvider, CycleManager cycleManager)
         {
             _logger = loggerFactory.CreateLogger<FeedConverter>();
             _serviceProvider = serviceProvider;
+            _cycleManager = cycleManager;
         }
 
         [Function(nameof(FeedConverter))]
         [TableOutput("Cycle", "Cycle", "cycle-number")]
         public async Task<Cycle> Run(
-            [TimerTrigger("0 0 */4 * * *" 
+            [TimerTrigger("0 */30 * * * *" 
 #if DEBUG
             , RunOnStartup=true
 #endif
@@ -44,29 +48,31 @@ namespace MyFeeds
                     _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
                 }
 
-                //await GetAllFeedBuilders(blobContainerClient);
+                
                 await tableClient.CreateIfNotExistsAsync();
-
-                // filter: $"PartitionKey eq 'PartitionKey' and RowKey eq 'cycleInput'"
 
                 AsyncPageable<Cycle> queryResults = tableClient.QueryAsync<Cycle>(c => c.PartitionKey == nameof(Cycle) && c.RowKey == nameof(Cycle));
 
                 List<Cycle> cycles = await queryResults.ToListAsync<Cycle>();
 
+                Cycle updatedCycle = new Cycle()
+                {
+                    PartitionKey = nameof(Cycle),
+                    RowKey = nameof(Cycle),
+                    CycleNumber = 0
+                };
+
                 if (cycles.Count > 0)
                 {
-                    cycles.First().CycleNumber = cycles.First().CycleNumber + 1;
-                    return cycles.First();
+                    updatedCycle = cycles.First();
                 }
-                else
-                {
-                    return new Cycle()
-                    {
-                        PartitionKey = nameof(Cycle),
-                        RowKey = nameof(Cycle),
-                        CycleNumber = 1
-                    };
-                }
+
+                updatedCycle.CycleNumber = updatedCycle.CycleNumber + 1;
+                _cycleManager.CycleNumber = updatedCycle.CycleNumber;
+
+                await GetAllFeedBuilders(blobContainerClient);
+
+                return updatedCycle;
 
             }
             catch (Exception ex)

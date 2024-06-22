@@ -1,12 +1,16 @@
 using System;
 using System.Configuration;
 using System.ServiceModel.Syndication;
+using System.Threading.Tasks;
 using System.Xml;
+using Azure;
+using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Google.Protobuf.Compiler;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MyFeeds.Utilities;
 
 namespace MyFeeds
 {
@@ -21,13 +25,15 @@ namespace MyFeeds
         }
 
         [Function(nameof(FeedConverter))]
-        public async Task Run(
+        [TableOutput("Cycle", "Cycle", "cycle-number")]
+        public async Task<Cycle> Run(
             [TimerTrigger("0 0 */4 * * *" 
 #if DEBUG
             , RunOnStartup=true
 #endif
             )] TimerInfo myTimer,
-            [BlobInput("feeds")] BlobContainerClient blobContainerClient)
+            [BlobInput("feeds")] BlobContainerClient blobContainerClient,
+            [TableInput("Cycle")] TableClient tableClient)
         {
             try
             {
@@ -38,7 +44,30 @@ namespace MyFeeds
                     _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
                 }
 
-                await GetAllFeedBuilders(blobContainerClient);
+                //await GetAllFeedBuilders(blobContainerClient);
+                await tableClient.CreateIfNotExistsAsync();
+
+                // filter: $"PartitionKey eq 'PartitionKey' and RowKey eq 'cycleInput'"
+
+                AsyncPageable<Cycle> queryResults = tableClient.QueryAsync<Cycle>(c => c.PartitionKey == nameof(Cycle) && c.RowKey == nameof(Cycle));
+
+                List<Cycle> cycles = await queryResults.ToListAsync<Cycle>();
+
+                if (cycles.Count > 0)
+                {
+                    cycles.First().CycleNumber = cycles.First().CycleNumber + 1;
+                    return cycles.First();
+                }
+                else
+                {
+                    return new Cycle()
+                    {
+                        PartitionKey = nameof(Cycle),
+                        RowKey = nameof(Cycle),
+                        CycleNumber = 1
+                    };
+                }
+
             }
             catch (Exception ex)
             {

@@ -22,9 +22,9 @@ namespace MyFeeds.Feeds
     public class Vinted : FeedBuilder
     {
         private readonly VintedClient _vintedClient;
-        private readonly CycleManager _cycleManager;
+        private readonly ICycleManager _cycleManager;
 
-        public Vinted(VintedClient vintedClient, ILoggerFactory loggerFactory, CycleManager cycleManager ) : base(loggerFactory)
+        public Vinted(VintedClient vintedClient, ILoggerFactory loggerFactory, ICycleManager cycleManager ) : base(loggerFactory)
         {
             _vintedClient = vintedClient;
             _cycleManager = cycleManager;

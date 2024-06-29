@@ -29,8 +29,7 @@ namespace MyFeeds
         }
 
         [Function(nameof(FeedConverter))]
-        [TableOutput("Cycle", "Cycle", "cycle-number")]
-        public async Task<Cycle> Run(
+        public async Task Run(
             [TimerTrigger("0 */30 * * * *" 
 #if DEBUG
             , RunOnStartup=true
@@ -48,31 +47,9 @@ namespace MyFeeds
                     _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
                 }
 
-                
-                await tableClient.CreateIfNotExistsAsync();
-
-                AsyncPageable<Cycle> queryResults = tableClient.QueryAsync<Cycle>(c => c.PartitionKey == nameof(Cycle) && c.RowKey == nameof(Cycle));
-
-                List<Cycle> cycles = await queryResults.ToListAsync<Cycle>();
-
-                Cycle updatedCycle = new Cycle()
-                {
-                    PartitionKey = nameof(Cycle),
-                    RowKey = nameof(Cycle),
-                    CycleNumber = 0
-                };
-
-                if (cycles.Count > 0)
-                {
-                    updatedCycle = cycles.First();
-                }
-
-                updatedCycle.CycleNumber = updatedCycle.CycleNumber + 1;
-                _cycleManager.CycleNumber = updatedCycle.CycleNumber;
+                await _cycleManager.ReccordRun();
 
                 await GetAllFeedBuilders(blobContainerClient);
-
-                return updatedCycle;
 
             }
             catch (Exception ex)

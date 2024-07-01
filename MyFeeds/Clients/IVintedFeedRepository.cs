@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyFeeds.Utilities
+namespace MyFeeds.Clients
 {
-    public interface ICycleManager
+    public interface IVintedFeedRepository
     {
-        bool CanRun(int index, int count);
-        Task ReccordRun();
+        Task<List<VintedFeed>> GetFeedInputs();
     }
 }

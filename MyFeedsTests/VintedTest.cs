@@ -23,8 +23,9 @@ namespace MyFeedsTests
             VintedClient vintedClient = new VintedClient(new HttpClient(vintedDelegatingHandler));
 
             ICycleManager cycleManager = new CycleManagerMock();
+            IVintedFeedRepository vintedFeedRepository = new VintedFeedRepositoryMock();
 
-            Vinted vinted = new MyFeeds.Feeds.Vinted(vintedClient, new NullLoggerFactory(), cycleManager);
+            Vinted vinted = new MyFeeds.Feeds.Vinted(vintedClient, new NullLoggerFactory(), cycleManager, vintedFeedRepository);
             List<MyFeeds.Feed> feeds = await vinted.GetFeeds();
 
             Assert.Single(feeds);

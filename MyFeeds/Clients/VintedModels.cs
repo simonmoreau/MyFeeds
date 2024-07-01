@@ -124,7 +124,7 @@ namespace MyFeeds.Clients
         public int BrandId { get; set; }
 
         [JsonPropertyName("size_id")]
-        public int SizeId { get; set; }
+        public int? SizeId { get; set; }
 
         [JsonPropertyName("status_id")]
         public int StatusId { get; set; }
@@ -433,7 +433,7 @@ namespace MyFeeds.Clients
         public object Badge { get; set; }
 
         [JsonPropertyName("size_guide_faq_entry_id")]
-        public int SizeGuideFaqEntryId { get; set; }
+        public int? SizeGuideFaqEntryId { get; set; }
 
         [JsonPropertyName("localization")]
         public string Localization { get; set; }

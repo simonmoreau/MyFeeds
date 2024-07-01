@@ -11,7 +11,12 @@ namespace MyFeedsTests.Mocks
     {
         public bool CanRun(int index, int count)
         {
-            return index == 1;
+            return index == 0;
+        }
+
+        public Task ReccordRun()
+        {
+            return Task.CompletedTask;
         }
     }
 }

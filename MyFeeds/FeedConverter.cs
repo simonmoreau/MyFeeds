@@ -19,9 +19,9 @@ namespace MyFeeds
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly CycleManager _cycleManager;
+        private readonly ICycleManager _cycleManager;
 
-        public FeedConverter(ILoggerFactory loggerFactory, IServiceProvider serviceProvider, CycleManager cycleManager)
+        public FeedConverter(ILoggerFactory loggerFactory, IServiceProvider serviceProvider, ICycleManager cycleManager)
         {
             _logger = loggerFactory.CreateLogger<FeedConverter>();
             _serviceProvider = serviceProvider;

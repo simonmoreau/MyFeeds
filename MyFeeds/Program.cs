@@ -16,8 +16,13 @@ IHost host = new HostBuilder()
         });
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
+
         services.AddScoped<VintedDelegatingHandler>();
-        services.AddScoped<CycleManager>();
+
+        services.AddScoped<ICycleManager, CycleManager>();
+        services.AddScoped<IVintedFeedRepository, VintedFeedRepository>();
+        
+
         services.AddHttpClient<VintedAuthenticationClient>();
         services.AddHttpClient<VintedClient>()
         .ConfigurePrimaryHttpMessageHandler(

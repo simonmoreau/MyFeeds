@@ -74,15 +74,16 @@ namespace MyFeeds.Feeds
             {
                 ItemDetail detailItem = await _vintedClient.GetItem(summaryItem.Id);
                 Item item = detailItem.Item;
+                string title = $"{item.Title} - {item.TotalItemPrice} {item.Currency} - {item.Size}";
 
                 Article article = new Article
                 {
                     Id = item.Url,
-                    HTMLTitle = item.Title + " " + item.SizeTitle + " " + item.Price.Amount + " " + item.Price.CurrencyCode,
-                    Title = item.Title + " " + item.SizeTitle + " " + item.Price.Amount + " " + item.Price.CurrencyCode,
+                    HTMLTitle = title,
+                    Title = title,
                     WebsiteUrl = item.Url,
                     Link = item.Url,
-                    Summary = item.Title + " " + item.SizeTitle + " " + item.Price.Amount + " " + item.Price.CurrencyCode,
+                    Summary = title,
                     Content = BuildContent(item),
                     MediaLink = "",
                     Updated = item.UpdatedAtTs.Value,

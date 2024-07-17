@@ -160,7 +160,7 @@ namespace MyFeeds.Clients
         public int IsUnisex { get; set; }
 
         [JsonPropertyName("is_closed")]
-        public int IsClosed { get; set; }
+        public object IsClosed { get; set; }
 
         [JsonPropertyName("moderation_status")]
         public int ModerationStatus { get; set; }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 
 namespace MyFeeds.Clients
@@ -33,7 +34,15 @@ namespace MyFeeds.Clients
             {
                 foreach (VintedFeed vintedFeed in feeds)
                 {
-                    vintedFeed.Url = vintedFeed.Url + "&" + sizes;
+                    System.Collections.Specialized.NameValueCollection paramsCollection = HttpUtility.ParseQueryString(vintedFeed.Url);
+                    if (paramsCollection != null && paramsCollection.AllKeys.Contains("size_ids"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        vintedFeed.Url = vintedFeed.Url + "&" + sizes;
+                    }
                 }
             }
 

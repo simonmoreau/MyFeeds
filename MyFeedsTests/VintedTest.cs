@@ -1,3 +1,4 @@
+using Azure.Data.Tables;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MyFeeds.Clients;
@@ -47,6 +48,18 @@ namespace MyFeedsTests
 
             Assert.NotNull(sessionCookie);
 
+        }
+
+        [Fact]
+        public async Task GetFeedInput()
+        {
+            Environment.SetEnvironmentVariable("VintedSizes", "size_ids=208,208,213,1637,1638,1652,1547,1611,1594,784,1524");
+
+            TableServiceClient tableServiceClient = new TableServiceClient("UseDevelopmentStorage=true");
+            IVintedFeedRepository vintedFeedRepository = new VintedFeedRepository(tableServiceClient);
+            List<VintedFeed> inputs = await vintedFeedRepository.GetFeedInputs();
+
+            Assert.NotEmpty(inputs);
         }
     }
 }

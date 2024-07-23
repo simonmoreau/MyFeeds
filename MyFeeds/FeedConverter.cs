@@ -30,7 +30,7 @@ namespace MyFeeds
 
         [Function(nameof(FeedConverter))]
         public async Task Run(
-            [TimerTrigger("0 */30 * * * *" 
+            [TimerTrigger("0 0 * * * *" 
 #if DEBUG
             , RunOnStartup=true
 #endif

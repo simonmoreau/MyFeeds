@@ -49,7 +49,7 @@ namespace MyFeeds.Clients
         public string Price { get; set; }
 
         [JsonPropertyName("is_visible")]
-        public int IsVisible { get; set; }
+        public object IsVisible { get; set; }
 
         [JsonPropertyName("discount")]
         public object Discount { get; set; }
@@ -154,7 +154,7 @@ namespace MyFeeds.Clients
         public object? IsReserved { get; set; }
 
         [JsonPropertyName("is_visible")]
-        public int IsVisible { get; set; }
+        public object IsVisible { get; set; }
 
         [JsonPropertyName("is_unisex")]
         public int IsUnisex { get; set; }

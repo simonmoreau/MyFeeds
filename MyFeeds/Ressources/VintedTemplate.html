@@ -8,14 +8,14 @@
     <h4>{{Color1}},{{Color2}}</h4>
     <p>{{Description}}</p>
 
-    <p>Created At: {{CreatedAtTs}}</p>
-    <p>Updated At: {{UpdatedAtTs}}</p>
-
     {% for descriptionAttribute in DescriptionAttributes %}
     <div>
-        <p>{{descriptionAttribute.title}}: {{descriptionAttribute.value}}</p>
+        <p>{{descriptionAttribute.Title}}: {{descriptionAttribute.Value}}</p>
     </div>
     {% endfor %}
+
+    <p>Created At: {{CreatedAtTs}}</p>
+    <p>Updated At: {{UpdatedAtTs}}</p>
 
     {% for photo in Photos %}
     <div>

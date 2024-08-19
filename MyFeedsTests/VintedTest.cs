@@ -11,22 +11,29 @@ namespace MyFeedsTests
 {
     public class VintedTest
     {
-        [Fact]
-        public async Task Load()
-        {
+        private readonly VintedClient _vintedClient;
+        private readonly CycleManagerMock cycleManager;
+        private readonly VintedFeedRepositoryMock vintedFeedRepository;
 
+        public VintedTest()
+        {
             ILogger<VintedDelegatingHandler> logger = new NullLoggerFactory().CreateLogger<VintedDelegatingHandler>();
 
             HttpClientHandler httpClientHandler = new HttpClientHandler() { UseCookies = false };
             VintedAuthenticationClient vintedAuthenticationClient = new VintedAuthenticationClient(new HttpClient());
 
-            VintedDelegatingHandler vintedDelegatingHandler = new VintedDelegatingHandler(httpClientHandler, vintedAuthenticationClient, logger );
-            VintedClient vintedClient = new VintedClient(new HttpClient(vintedDelegatingHandler));
+            VintedDelegatingHandler vintedDelegatingHandler = new VintedDelegatingHandler(httpClientHandler, vintedAuthenticationClient, logger);
+            _vintedClient = new VintedClient(new HttpClient(vintedDelegatingHandler));
 
-            ICycleManager cycleManager = new CycleManagerMock();
-            IVintedFeedRepository vintedFeedRepository = new VintedFeedRepositoryMock();
+            cycleManager = new CycleManagerMock();
+            vintedFeedRepository = new VintedFeedRepositoryMock();
+        }
 
-            Vinted vinted = new MyFeeds.Feeds.Vinted(vintedClient, new NullLoggerFactory(), cycleManager, vintedFeedRepository);
+        [Fact]
+        public async Task Load()
+        {
+
+            Vinted vinted = new MyFeeds.Feeds.Vinted(_vintedClient, new NullLoggerFactory(), cycleManager, vintedFeedRepository);
             List<MyFeeds.Feed> feeds = await vinted.GetFeeds();
 
             Assert.Single(feeds);
@@ -60,6 +67,21 @@ namespace MyFeedsTests
             List<VintedFeed> inputs = await vintedFeedRepository.GetFeedInputs();
 
             Assert.NotEmpty(inputs);
+        }
+
+        [Fact]
+        public async Task BuildContent()
+        {
+            long summaryItemId = 4904801466;
+
+            Vinted vinted = new MyFeeds.Feeds.Vinted(_vintedClient, new NullLoggerFactory(), cycleManager, vintedFeedRepository);
+
+            ItemDetail detailItem = await _vintedClient.GetItem(summaryItemId);
+            Item item = detailItem.Item;
+
+            string Content = vinted.BuildContent(item);
+
+            Assert.NotEmpty(Content);
         }
     }
 }

@@ -98,7 +98,7 @@ namespace MyFeeds.Feeds
             return articles;
         }
 
-        private string BuildContent(Item item)
+        public string BuildContent(Item item)
         {
             item.Description = item.Description.Replace("\n", "<br>");
             TemplateOptions templateOptions = TemplateOptions.Default;

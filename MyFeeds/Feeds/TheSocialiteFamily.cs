@@ -43,8 +43,8 @@ namespace MyFeeds.Feeds
 
             HtmlDocument doc = await web.LoadFromWebAsync(mainPageUrl);
 
-            string ClassToGet = "styles_card__lwlOE styles_ArticleCard__h9V9N";
-            string xPath = @"//a[@class='" + ClassToGet + "']";
+            string classToGet = "styles_ArticleCard__h9V9N";
+            string xPath = @$"//a[contains(@class,'{classToGet}')]";
             HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
 
             List<Task<Article>> tasksArticles = new List<Task<Article>>();

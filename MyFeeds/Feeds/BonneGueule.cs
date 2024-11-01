@@ -44,8 +44,8 @@ namespace MyFeeds.Feeds
 
             HtmlDocument doc = await web.LoadFromWebAsync(mainPageUrl);
 
-            string ClassToGet = "article--content";
-            string xPath = @"//div[@class='" + ClassToGet + "']";
+            string classToGet = "article-item  image-zoom";
+            string xPath = @$"//div[contains(@class,'{classToGet}')]";
             HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
 
             List<Task<Article>> tasksArticles = new List<Task<Article>>();
@@ -71,7 +71,7 @@ namespace MyFeeds.Feeds
 
             HtmlDocument doc = await web.LoadFromWebAsync(link);
 
-            string ClassToGet = "bg-white position-relative";
+            string ClassToGet = "article__main-part";
             string xPath = @"//div[@class='" + ClassToGet + "']";
             HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(xPath);
 
@@ -79,12 +79,12 @@ namespace MyFeeds.Feeds
             string content = htmlNodes.FirstOrDefault()?.InnerHtml;
             if (content == null) return null;
 
-            string titleXpath = @"//h1[@class='h1 color-primary text-center mt-3 mt-lg-8 xxs12 md8 mx-auto']";
+            string titleXpath = @"//h1[@class='article__title heading h3']";
             HtmlNode? titleNode = doc.DocumentNode.SelectNodes(titleXpath)?.FirstOrDefault();
             if (titleNode == null) return null;
             string title = titleNode.InnerText;
 
-            string dateXpath = @"//div[@class='xxs6 text-left']";
+            string dateXpath = @"//time[@class='article__date article__date--published']";
             HtmlNode? dateNode = doc.DocumentNode.SelectNodes(dateXpath).FirstOrDefault();
             if (dateNode == null) return null;
             string dateText = dateNode.InnerText.Split("Mis")[0].Replace("Publié le : ", "");
@@ -99,7 +99,7 @@ namespace MyFeeds.Feeds
 
 
 
-            string authorXpath = @"//div[@class='xxs6 text-right']";
+            string authorXpath = @"//div[@class='article__metadata-item article__author']";
             HtmlNode? authorNode = doc.DocumentNode.SelectNodes(authorXpath).FirstOrDefault();
             if (authorNode == null) return null;
             string author = authorNode.InnerText;

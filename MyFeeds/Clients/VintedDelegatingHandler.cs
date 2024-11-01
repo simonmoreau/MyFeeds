@@ -36,13 +36,15 @@ namespace MyFeeds.Clients
             HttpResponseMessage httpResponseMessage;
             try
             {
-                string accessToken = await _authenticationClient.GetSessionCookie();
-                if (string.IsNullOrEmpty(accessToken))
+                VintedCookie? vintedCookie = await _authenticationClient.GetSessionCookie();
+                if (vintedCookie == null)
                 {
                     throw new Exception($"Access token is missing for the request {request.RequestUri}");
                 }
 
-                request.Headers.Add("Cookie", $"_vinted_fr_session={accessToken};");
+                request.Headers.Add("Cookie", $"_vinted_fr_session={vintedCookie.Session};");
+                request.Headers.Add("Cookie", $"access_token_web={vintedCookie.AccessToken};");
+                request.Headers.Add("Cookie", $"refresh_token_web={vintedCookie.RefreshToken};");
 
                 httpResponseMessage = await base.SendAsync(request, cancellationToken);
 
@@ -50,13 +52,16 @@ namespace MyFeeds.Clients
                 {
                     _authenticationClient.ClearCachedCookie();
 
-                    accessToken = await _authenticationClient.GetSessionCookie();
-                    if (string.IsNullOrEmpty(accessToken))
+                    vintedCookie = await _authenticationClient.GetSessionCookie();
+                    if (vintedCookie == null)
                     {
                         throw new Exception($"Access token is missing for the request {request.RequestUri}");
                     }
 
-                    request.Headers.Add("Cookie", $"_vinted_fr_session={accessToken};");
+                    request.Headers.Remove("Cookie");
+                    request.Headers.Add("Cookie", $"_vinted_fr_session={vintedCookie.Session};");
+                    request.Headers.Add("Cookie", $"access_token_web={vintedCookie.AccessToken};");
+                    request.Headers.Add("Cookie", $"refresh_token_web={vintedCookie.RefreshToken};");
 
                     httpResponseMessage = await base.SendAsync(request, cancellationToken);
 

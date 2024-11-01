@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace MyFeedsTests.Mocks
 {
@@ -15,7 +16,7 @@ namespace MyFeedsTests.Mocks
                 new VintedFeed()
                 {
                     Name = "suitsupply",
-                    Url = "catalog[]=2050&brand_ids[]=316774",
+                    Url = "catalog[]=2050&brand_ids[]=368476&search_text=spalle&size_ids[]=1595",
                 }
             });
         }

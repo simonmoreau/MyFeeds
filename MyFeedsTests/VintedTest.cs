@@ -51,7 +51,7 @@ namespace MyFeedsTests
 
             VintedAuthenticationClient vintedAuthenticationClient = new VintedAuthenticationClient(new HttpClient());
 
-            string sessionCookie = await vintedAuthenticationClient.GetSessionCookie();
+            VintedCookie? sessionCookie = await vintedAuthenticationClient.GetSessionCookie();
 
             Assert.NotNull(sessionCookie);
 

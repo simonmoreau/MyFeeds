@@ -16,6 +16,7 @@ namespace MyFeeds
         public readonly string WebLink;
         public readonly string Id;
         public readonly string Link;
+        public readonly DateTime UpdatedAt;
         public Feed(string title, string subtitle, string webLink)
         {
             Title = title;

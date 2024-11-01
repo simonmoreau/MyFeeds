@@ -12,7 +12,7 @@ namespace MyFeeds.Clients
     {
         public HttpClient Client { get; }
 
-        private string? _cachedCookie;
+        private VintedCookie? _cachedCookie;
 
         public VintedAuthenticationClient(HttpClient client)
         {
@@ -25,12 +25,14 @@ namespace MyFeeds.Clients
             Client = client;
         }
 
-        public async Task<string> GetSessionCookie()
+        public async Task<VintedCookie?> GetSessionCookie()
         {
-            if (!string.IsNullOrEmpty(_cachedCookie))
+            if (_cachedCookie != null)
             {
                 return _cachedCookie;
             }
+
+            _cachedCookie = new VintedCookie();
 
             HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, "/");
 
@@ -40,27 +42,57 @@ namespace MyFeeds.Clients
             IEnumerable<string> cookies = response.Headers.SingleOrDefault(header => header.Key == "Set-Cookie").Value;
             if (cookies == null)
             {
-                return "";
+                return null;
             }
 
             foreach (string cookie in cookies)
             {
-                if (cookie.Contains("_vinted_fr_session"))
-                {
-                    string pattern = @"_vinted_fr_session=(.*?);";
-                    Match match = Regex.Match(cookie, pattern);
-                    if (!match.Success) { continue; }
-                    _cachedCookie = match.Groups[1].Value;
-                    return _cachedCookie;
-                }
+                string? session = GetCookieValue(cookie, "_vinted_fr_session");
+                if (session != null) _cachedCookie.Session = session;
+
+                string? acessToken = GetCookieValue(cookie, "access_token_web");
+                if (acessToken != null) _cachedCookie.AccessToken = acessToken;
+
+                string? refreshToken = GetCookieValue(cookie, "refresh_token_web");
+                if (refreshToken != null) _cachedCookie.RefreshToken = refreshToken;
+
             }
-            return "";
+
+            if (!_cachedCookie.IsValid()) return null;
+
+            return _cachedCookie;
         }
+
+        private string? GetCookieValue(string cookie, string value)
+        {
+            if (!cookie.Contains(value))
+            {
+                return null;
+            }
+
+            string pattern = @$"{value}=(.*?);";
+            Match match = Regex.Match(cookie, pattern);
+            if (!match.Success) { return null; }
+            return match.Groups[1].Value;
+        }
+
 
         public void ClearCachedCookie()
         {
             _cachedCookie = null;
         }
 
+    }
+
+    public class VintedCookie
+    {
+        public string? Session { get; set; }
+        public string? AccessToken { get; set; }
+        public string? RefreshToken { get; set; }
+
+        public bool IsValid()
+        {
+            return Session != null && AccessToken != null && RefreshToken != null;
+        }
     }
 }

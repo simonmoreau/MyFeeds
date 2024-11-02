@@ -2,7 +2,7 @@ name: Build and deploy .NET Core application to Function App fnappvvii6iolmabic
 on:
   push:
     branches:
-    - refactor
+    - master
 env:
   AZURE_FUNCTIONAPP_NAME: fnappvvii6iolmabic
   AZURE_FUNCTIONAPP_PACKAGE_PATH: MyFeeds\published

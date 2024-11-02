@@ -1,0 +1,26 @@
+﻿
+<div>
+    <h3>{{Title}} - {{TotalItemPrice}} {{Currency}} - {{Size}}</h3>
+    <h3>{{CatalogBranchTitle}}</h3>
+    <h3>{{Brand}}</h3>
+    <h3>{{Composition}}</h3>
+    <h4>{{Status}}</h4>
+    <h4>{{Color1}},{{Color2}}</h4>
+    <p>{{Description}}</p>
+
+    {% for descriptionAttribute in DescriptionAttributes %}
+    <div>
+        <p>{{descriptionAttribute.Title}}: {{descriptionAttribute.Value}}</p>
+    </div>
+    {% endfor %}
+
+    <p>Created At: {{CreatedAtTs}}</p>
+    <p>Updated At: {{UpdatedAtTs}}</p>
+
+    {% for photo in Photos %}
+    <div>
+        <img src="{{photo.Url}}" width="{{photo.Width}}" height="{{photo.Height}}">
+    </div>
+    {% endfor %}
+
+</div>

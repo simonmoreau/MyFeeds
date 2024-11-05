@@ -67,6 +67,7 @@ namespace MyFeedsTests
             List<VintedFeed> inputs = await vintedFeedRepository.GetFeedInputs();
 
             Assert.NotEmpty(inputs);
+            Assert.All(inputs, i=> Assert.True(i.Activated));
         }
 
         [Fact]

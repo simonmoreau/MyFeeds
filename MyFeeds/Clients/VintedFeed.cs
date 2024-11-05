@@ -11,6 +11,7 @@ namespace MyFeeds.Clients
     {
         public string Url { get; set; }
         public string Name { get; set; }
+        public bool Activated { get; set; }
         public string PartitionKey { get; set; }
         public string RowKey { get; set; }
         public DateTimeOffset? Timestamp { get; set; }

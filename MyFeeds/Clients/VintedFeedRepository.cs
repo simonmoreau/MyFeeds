@@ -24,7 +24,7 @@ namespace MyFeeds.Clients
         {
             TableClient tableClient = _tableServiceClient.GetTableClient(nameof(VintedFeedRepository));
 
-            AsyncPageable<VintedFeed> queryResults = tableClient.QueryAsync<VintedFeed>(c => c.PartitionKey == nameof(VintedFeed));
+            AsyncPageable<VintedFeed> queryResults = tableClient.QueryAsync<VintedFeed>(c => c.PartitionKey == nameof(VintedFeed) && c.Activated);
 
             List<VintedFeed> feeds = await queryResults.ToListAsync<VintedFeed>();
 

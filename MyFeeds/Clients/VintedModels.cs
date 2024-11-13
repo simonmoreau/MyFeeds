@@ -46,7 +46,7 @@ namespace MyFeeds.Clients
         public string Title { get; set; }
 
         [JsonPropertyName("price")]
-        public string Price { get; set; }
+        public Price Price { get; set; }
 
         [JsonPropertyName("is_visible")]
         public object IsVisible { get; set; }
@@ -85,10 +85,10 @@ namespace MyFeeds.Clients
         public object Conversion { get; set; }
 
         [JsonPropertyName("service_fee")]
-        public string ServiceFee { get; set; }
+        public Price ServiceFee { get; set; }
 
         [JsonPropertyName("total_item_price")]
-        public string TotalItemPrice { get; set; }
+        public Price TotalItemPrice { get; set; }
 
         [JsonPropertyName("total_item_price_rounded")]
         public object TotalItemPriceRounded { get; set; }

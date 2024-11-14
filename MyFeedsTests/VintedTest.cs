@@ -5,6 +5,7 @@ using MyFeeds.Clients;
 using MyFeeds.Feeds;
 using MyFeeds.Utilities;
 using MyFeedsTests.Mocks;
+using System.Security.Policy;
 
 
 namespace MyFeedsTests
@@ -38,6 +39,16 @@ namespace MyFeedsTests
 
             Assert.Single(feeds);
             Assert.True(feeds.First().Articles.Count > 0);
+
+        }
+
+        [Fact]
+        public async Task GetFeedContent()
+        {
+            Vinted vinted = new MyFeeds.Feeds.Vinted(_vintedClient, new NullLoggerFactory(), cycleManager, vintedFeedRepository);
+            List<MyFeeds.Feed> feeds = await vinted.GetFeeds();
+
+            List<string> content = feeds.SelectMany(f => f.Articles).Select(a => a.Content).ToList();
 
         }
 

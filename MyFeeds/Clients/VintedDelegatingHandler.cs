@@ -42,7 +42,6 @@ namespace MyFeeds.Clients
                     throw new Exception($"Access token is missing for the request {request.RequestUri}");
                 }
 
-                request.Headers.Add("Cookie", $"_vinted_fr_session={vintedCookie.Session};");
                 request.Headers.Add("Cookie", $"access_token_web={vintedCookie.AccessToken};");
                 request.Headers.Add("Cookie", $"refresh_token_web={vintedCookie.RefreshToken};");
 
@@ -59,7 +58,6 @@ namespace MyFeeds.Clients
                     }
 
                     request.Headers.Remove("Cookie");
-                    request.Headers.Add("Cookie", $"_vinted_fr_session={vintedCookie.Session};");
                     request.Headers.Add("Cookie", $"access_token_web={vintedCookie.AccessToken};");
                     request.Headers.Add("Cookie", $"refresh_token_web={vintedCookie.RefreshToken};");
 

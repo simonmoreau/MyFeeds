@@ -47,8 +47,6 @@ namespace MyFeeds.Clients
 
             foreach (string cookie in cookies)
             {
-                string? session = GetCookieValue(cookie, "_vinted_fr_session");
-                if (session != null) _cachedCookie.Session = session;
 
                 string? acessToken = GetCookieValue(cookie, "access_token_web");
                 if (acessToken != null) _cachedCookie.AccessToken = acessToken;
@@ -86,13 +84,12 @@ namespace MyFeeds.Clients
 
     public class VintedCookie
     {
-        public string? Session { get; set; }
         public string? AccessToken { get; set; }
         public string? RefreshToken { get; set; }
 
         public bool IsValid()
         {
-            return Session != null && AccessToken != null && RefreshToken != null;
+            return AccessToken != null && RefreshToken != null;
         }
     }
 }

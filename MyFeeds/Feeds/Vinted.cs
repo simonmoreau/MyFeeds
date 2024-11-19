@@ -64,7 +64,7 @@ namespace MyFeeds.Feeds
         private async Task<List<Article>> GetArticles(string searchRoute)
         {
             List<Article> articles = new List<Article>();
-            int itemNumber = 15;
+            int itemNumber = 20;
 
             List<ItemSummary> items = await _vintedClient.SearchItems(itemNumber, searchRoute);
 

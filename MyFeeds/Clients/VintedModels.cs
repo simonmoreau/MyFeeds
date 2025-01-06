@@ -157,7 +157,7 @@ namespace MyFeeds.Clients
         public object IsVisible { get; set; }
 
         [JsonPropertyName("is_unisex")]
-        public int IsUnisex { get; set; }
+        public object IsUnisex { get; set; }
 
         [JsonPropertyName("is_closed")]
         public object IsClosed { get; set; }

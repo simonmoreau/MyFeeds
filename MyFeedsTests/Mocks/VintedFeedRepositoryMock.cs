@@ -16,7 +16,7 @@ namespace MyFeedsTests.Mocks
                 new VintedFeed()
                 {
                     Name = "suitsupply",
-                    Url = $"catalog[]=2050&brand_ids[]=368476&search_text=spalle&size_ids[]={VintedSizes.Vestes_50}",
+                    Url = $"catalog_ids=2050&brand_ids=313302",
                 }
             });
         }
